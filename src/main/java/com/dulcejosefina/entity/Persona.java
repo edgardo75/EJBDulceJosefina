@@ -7,6 +7,9 @@ package com.dulcejosefina.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,6 +18,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
@@ -63,6 +67,8 @@ public class Persona implements Serializable {
     private TiposPersona tiposPersona;
     @OneToOne(orphanRemoval = true,fetch = FetchType.LAZY,mappedBy = "perfilPersona")
     private Perfil perfil;
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "personaFK")
+    private List<Producto> producto;
 
     public Long getId() {
         return id;
@@ -182,6 +188,49 @@ public class Persona implements Serializable {
 
     public void setTiposPersona(TiposPersona tiposPersona) {
         this.tiposPersona = tiposPersona;
+    }
+
+    public List<Producto> getProducto() {
+        return producto;
+    }
+
+    public void setProducto(List<Producto> producto) {
+        this.producto = producto;
+    }
+
+   
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (int) (this.id ^ (this.id >>> 32));
+        hash = 97 * hash + Objects.hashCode(this.nombre);
+        hash = 97 * hash + Objects.hashCode(this.apellido);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Persona other = (Persona) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        if (!Objects.equals(this.nombre, other.nombre)) {
+            return false;
+        }
+        if (!Objects.equals(this.apellido, other.apellido)) {
+            return false;
+        }
+        return true;
     }
 
     

@@ -22,20 +22,23 @@ import javax.persistence.Temporal;
  * @author Edgardo
  */
 @Entity
-public class Venta implements Serializable {
+public class Compra implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Column(name = "ID_VENTA")
+    @Column(name = "ID_COMPRA")
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
     @Column(name = "PRESENTACION")
     private String presentacion;
-    
+    @Column(name = "FECHA_COMPRA")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaCompra;
+    @ManyToOne(cascade = {CascadeType.ALL},fetch = FetchType.LAZY,targetEntity = Producto.class)
+    private Producto productoFK;
     @ManyToOne(cascade = {CascadeType.ALL},fetch = FetchType.LAZY,targetEntity = Pack.class)
     private Pack packFK;
-    @ManyToOne(cascade = { CascadeType.ALL},fetch = FetchType.LAZY,targetEntity = Producto.class)
-    private Producto productoFK;
+    
 
     public Long getId() {
         return id;
@@ -53,23 +56,21 @@ public class Venta implements Serializable {
         this.presentacion = presentacion;
     }
 
-    public Pack getPackFK() {
-        return packFK;
-    }
-
-    public void setPackFK(Pack packFK) {
-        this.packFK = packFK;
-    }
-
-    public Producto getProductoFK() {
+    public Producto getProducto() {
         return productoFK;
     }
 
-    public void setProductoFK(Producto productoFK) {
-        this.productoFK = productoFK;
+    public void setProducto(Producto producto) {
+        this.productoFK = producto;
     }
-    
-    
+
+    public Pack getPack() {
+        return packFK;
+    }
+
+    public void setPack(Pack pack) {
+        this.packFK = pack;
+    }
 
     @Override
     public int hashCode() {
@@ -81,10 +82,10 @@ public class Venta implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Venta)) {
+        if (!(object instanceof Compra)) {
             return false;
         }
-        Venta other = (Venta) object;
+        Compra other = (Compra) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -93,7 +94,7 @@ public class Venta implements Serializable {
 
     @Override
     public String toString() {
-        return "com.dulcejosefina.entity.Venta[ id=" + id + " ]";
+        return "com.dulcejosefina.entity.Compra[ id=" + id + " ]";
     }
     
 }

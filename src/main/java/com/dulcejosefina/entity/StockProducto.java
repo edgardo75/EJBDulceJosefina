@@ -6,10 +6,17 @@
 package com.dulcejosefina.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -20,8 +27,21 @@ public class StockProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(name = "ID_STOCK")
+    @GeneratedValue(strategy = GenerationType.TABLE)
+    private Long id;    
+    @Column(name = "PRECIO_UNITARIO_COMPRA",precision = 15,scale = 3)
+    private BigDecimal precioUnitarioCompra;
+    @Column(name = "PRECIO_UNITARIO_VENTA",precision = 15,scale = 3)
+    private BigDecimal precioUnitarioVenta;
+    @Column(name = "CANTIDAD_AGREGADA")
+    private int cantidadAgregada;
+    @Column(name = "FECHA_AGREGADO_PRODUCTO")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaAgregadoProducto;
+    
+    
+    
 
     public Long getId() {
         return id;

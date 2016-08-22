@@ -6,7 +6,7 @@
 package com.dulcejosefina.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,28 +14,27 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
+import javax.persistence.OneToMany;
 
 /**
  *
  * @author Edgardo
  */
 @Entity
-public class Venta implements Serializable {
+public class Pack implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Column(name = "ID_VENTA")
+    @Column(name = "ID_PACK")
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
-    @Column(name = "PRESENTACION")
-    private String presentacion;
+    @Column(name = "DESCRIPCION", unique = true,nullable = false)
+    private String descripcion;
+    @OneToMany(cascade = {CascadeType.REFRESH},mappedBy = "packFK",orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<Compra> compra;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "packFK",orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<Venta> venta;
     
-    @ManyToOne(cascade = {CascadeType.ALL},fetch = FetchType.LAZY,targetEntity = Pack.class)
-    private Pack packFK;
-    @ManyToOne(cascade = { CascadeType.ALL},fetch = FetchType.LAZY,targetEntity = Producto.class)
-    private Producto productoFK;
 
     public Long getId() {
         return id;
@@ -45,31 +44,31 @@ public class Venta implements Serializable {
         this.id = id;
     }
 
-    public String getPresentacion() {
-        return presentacion;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setPresentacion(String presentacion) {
-        this.presentacion = presentacion;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public Pack getPackFK() {
-        return packFK;
+    public List<Compra> getCompra() {
+        return compra;
     }
 
-    public void setPackFK(Pack packFK) {
-        this.packFK = packFK;
+    public void setCompra(List<Compra> compra) {
+        this.compra = compra;
     }
 
-    public Producto getProductoFK() {
-        return productoFK;
+    public List<Venta> getVenta() {
+        return venta;
     }
 
-    public void setProductoFK(Producto productoFK) {
-        this.productoFK = productoFK;
+    public void setVenta(List<Venta> venta) {
+        this.venta = venta;
     }
-    
-    
+
+   
 
     @Override
     public int hashCode() {
@@ -81,10 +80,10 @@ public class Venta implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Venta)) {
+        if (!(object instanceof Pack)) {
             return false;
         }
-        Venta other = (Venta) object;
+        Pack other = (Pack) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -93,7 +92,7 @@ public class Venta implements Serializable {
 
     @Override
     public String toString() {
-        return "com.dulcejosefina.entity.Venta[ id=" + id + " ]";
+        return "com.dulcejosefina.entity.PACK[ id=" + id + " ]";
     }
     
 }
