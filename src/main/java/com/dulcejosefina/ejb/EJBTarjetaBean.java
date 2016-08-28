@@ -35,7 +35,7 @@ private EntityManager em;
     @WebMethod(operationName = "crearTarjeta")
     public short crearTarjeta(@WebParam(name = "nombreTarjeta") String nombreTarjeta) {
         Tarjeta tarjeta = new Tarjeta();
-        tarjeta.setNombre(nombreTarjeta);
+        tarjeta.setNombre(nombreTarjeta.toUpperCase());
         em.persist(tarjeta);
         return tarjeta.getId().shortValue();
     }

@@ -1,44 +1,84 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.dulcejosefina.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-/**
- *
- * @author Edgardo
- */
+import javax.persistence.ManyToOne;
+import javax.persistence.TableGenerator;
 @Entity
 public class DetalleVentaSucursal implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Column(name = "ID_DETALLE_VENTA")
+    @TableGenerator(name = "DetalleVentaSucursalIdGen",table = "ID_GEN_DETALLE_VENTA_SUC", pkColumnName="FNAME",pkColumnValue="DetalleVentaSucursal", valueColumnName="FKEY",
+    allocationSize=1)
+    @Column(name = "ID_DETALLE_VENTA_SUCURSAL")
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
-    @Column(name = "SUBTOTAL")
+    @Column(name = "SUBTOTAL",columnDefinition = "DECIMAL(15,3) DEFAULT'0.000'")
     private BigDecimal subtotal;
-    @Column(name = "DESCUENTO")
+    @Column(name = "DESCUENTO",columnDefinition = "DECIMAL(15,3) DEFAULT'0.000'")
     private BigDecimal descuento;
-    @Column(name = "RECARGO")
+    @Column(name = "RECARGO",columnDefinition = "DECIMAL(15,3) DEFAULT'0.000'")
     private BigDecimal recargo;
-    
+    @Column(name = "ID_PRODUCTO")
+    private long idProducto;
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = VentaSucursal.class)
+    private VentaSucursal ventaSucursal;
 
+    public DetalleVentaSucursal(){}
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public BigDecimal getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(BigDecimal subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public BigDecimal getDescuento() {
+        return descuento;
+    }
+
+    public void setDescuento(BigDecimal descuento) {
+        this.descuento = descuento;
+    }
+
+    public BigDecimal getRecargo() {
+        return recargo;
+    }
+
+    public void setRecargo(BigDecimal recargo) {
+        this.recargo = recargo;
+    }
+
+    public long getIdProducto() {
+        return idProducto;
+    }
+
+    public void setIdProducto(long idProducto) {
+        this.idProducto = idProducto;
+    }
+
+    public VentaSucursal getVentaSucursal() {
+        return ventaSucursal;
+    }
+
+    public void setVentaSucursal(VentaSucursal ventaSucursal) {
+        this.ventaSucursal = ventaSucursal;
     }
 
     @Override
@@ -55,15 +95,20 @@ public class DetalleVentaSucursal implements Serializable {
             return false;
         }
         DetalleVentaSucursal other = (DetalleVentaSucursal) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
         return "com.dulcejosefina.entity.DetalleVentaSucursal[ id=" + id + " ]";
     }
+    public String toXML(){
+        StringBuilder xml = new StringBuilder("<itemDetalleVentaSucursal>");
+        
+        xml.append("<id>").append(this.getId()).append("</id>").append("<subtotal>").append(this.getSubtotal()).append("</subtotal>").append("<descuento>").append(this.getDescuento())
+                .append("</descuento>").append("<recargo>").append(this.getRecargo()).append("</recargo>").append("<productoId>").append(this.getIdProducto()).append("</productoId>")
+                .append("<ventaSucursalId>").append(this.getVentaSucursal().getId()).append("</ventaSucursalId>");
+    return xml.toString();
     
+    }
 }

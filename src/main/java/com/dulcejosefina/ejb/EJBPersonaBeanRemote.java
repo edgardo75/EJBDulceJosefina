@@ -10,5 +10,6 @@ package com.dulcejosefina.ejb;
  * @author Edgardo
  */
 public interface EJBPersonaBeanRemote {
-    
+    public long crearEmpleado(String xmlEmpleado);
+     public String selectAllEmpleadosYJefes();
 }

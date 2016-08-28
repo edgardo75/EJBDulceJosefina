@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.dulcejosefina.entity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -18,22 +14,22 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/**
- *
- * @author Edgardo
- */
 @Entity
+@NamedQueries({@NamedQuery(name = "empleadoFindAllEmpleadoYJefe",query = "SELECT p FROM Persona p WHERE p.tiposPersona = com.dulcejosefina.entity.TipoPersona.EMPLEADO OR p.tiposPersona = com.dulcejosefina.entity.TipoPersona.JEFE"),
+@NamedQuery(name="personaFindAll",query = "SELECT p FROM Persona p ORDER BY p.fechaCarga desc")})
 public class Persona implements Serializable {
 
     private static final long serialVersionUID = 1L;    
     @Id
-    @TableGenerator(name = "PersonaIdGen",table = "ID_GEN_PER", pkColumnName="FNAME",pkColumnValue="Personas", valueColumnName="FKEY",
+    @TableGenerator(name = "PersonaIdGen",table = "ID_GEN_PER", pkColumnName="FNAME",pkColumnValue="Persona", valueColumnName="FKEY",
     allocationSize=1)
     @GeneratedValue(generator = "PersonaIdGen",strategy = GenerationType.TABLE)
     @Column(name = "ID_PERSONA")
@@ -42,16 +38,18 @@ public class Persona implements Serializable {
     private String nombre;
     @Column(name = "APELLIDO")
     private String apellido;
-    @Column(name = "NUMERO_DOCUMENTO",unique = true,columnDefinition = "int")
+    @Column(name = "NUMERO_DOCUMENTO",unique = true,columnDefinition = "INTEGER default'null'")
     private int dni;    
-    @Column(name = "CUIL",unique = true,columnDefinition = "int")
-    private int cuil;
-    @Column(name = "EMAIL",unique = true)
+    @Column(name = "CUIL",unique = true,columnDefinition = "INTEGER default'null'")
+    private int cuil;    
+    @Column(name = "EMAIL",unique = true,columnDefinition = "VARCHAR(100)default'null'")
     private String email;
-    @Column(name="LOGIN",unique = true,columnDefinition = "VARCHAR(50)")
+    @Column(name="LOGIN",unique = true,columnDefinition = "VARCHAR(12)default'null'")
     private String login;
-    @Column(name="PASSWORD",columnDefinition = "VARCHAR(12) DEFAULT ''")
+    @Column(name="PASSWORD",columnDefinition = "VARCHAR(255) DEFAULT ''")
     private String password;
+    @Column(name="KEYPASSWORD",columnDefinition = "VARCHAR(255) DEFAULT ''")
+    private String keyPassword;
     @Column(name = "FECHACARGA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCarga;
@@ -59,17 +57,23 @@ public class Persona implements Serializable {
     private char estado;
     @Column(name = "DETALLES",columnDefinition = "VARCHAR(255) DEFAULT ''")
     private String detalles;
+    @Column(name = "GENERO",columnDefinition = "VARCHAR(10) DEFAULT ''")
     @Enumerated(EnumType.STRING)
     private Genero genero;
+    @Column(name = "TIPO_DOCUMENTO",columnDefinition = "VARCHAR(8) DEFAULT ''")
     @Enumerated(EnumType.STRING)
-    private TiposDocumento tipoDocumento;
+    private TipoDocumento tipoDocumento;
+    @Column(name = "TIPO_PERSONA",columnDefinition = "VARCHAR(8) DEFAULT ''")
     @Enumerated(EnumType.STRING)
-    private TiposPersona tiposPersona;
+    private TipoPersona tiposPersona;
     @OneToOne(orphanRemoval = true,fetch = FetchType.LAZY,mappedBy = "perfilPersona")
-    private Perfil perfil;
+    private PerfilUsuario perfil;
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "personaFK")
     private List<Producto> producto;
-
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "persona")
+    private List<VentaSucursal> ventaSucursal;
+    
+    public Persona(){}
     public Long getId() {
         return id;
     }
@@ -166,27 +170,27 @@ public class Persona implements Serializable {
         this.genero = genero;
     }
 
-    public Perfil getPerfil() {
+    public PerfilUsuario getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(Perfil perfil) {
+    public void setPerfil(PerfilUsuario perfil) {
         this.perfil = perfil;
     }
 
-    public TiposDocumento getTipoDocumento() {
+    public TipoDocumento getTipoDocumento() {
         return tipoDocumento;
     }
 
-    public void setTipoDocumento(TiposDocumento tipoDocumento) {
+    public void setTipoDocumento(TipoDocumento tipoDocumento) {
         this.tipoDocumento = tipoDocumento;
     }
 
-    public TiposPersona getTiposPersona() {
+    public TipoPersona getTiposPersona() {
         return tiposPersona;
     }
 
-    public void setTiposPersona(TiposPersona tiposPersona) {
+    public void setTiposPersona(TipoPersona tiposPersona) {
         this.tiposPersona = tiposPersona;
     }
 
@@ -196,6 +200,22 @@ public class Persona implements Serializable {
 
     public void setProducto(List<Producto> producto) {
         this.producto = producto;
+    }
+
+    public List<VentaSucursal> getVentaSucursal() {
+        return ventaSucursal;
+    }
+
+    public void setVentaSucursal(List<VentaSucursal> ventaSucursal) {
+        this.ventaSucursal = ventaSucursal;
+    }
+
+    public String getKeyPassword() {
+        return keyPassword;
+    }
+
+    public void setKeyPassword(String keyPassword) {
+        this.keyPassword = keyPassword;
     }
 
    
@@ -227,17 +247,20 @@ public class Persona implements Serializable {
         if (!Objects.equals(this.nombre, other.nombre)) {
             return false;
         }
-        if (!Objects.equals(this.apellido, other.apellido)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.apellido, other.apellido);
     }
-
-    
-
     @Override
     public String toString() {
         return "com.dulcejosefina.entity.Persona[ id=" + id + " ]";
+    }
+    public String toXML(){        
+    StringBuilder xml = new StringBuilder(5);
+    xml.append("<id>").append(this.getId()).append("</id>").append("<nombre>").append(this.getNombre()).append("</nombre>").append("<apellido>").append(this.getApellido()).append("</apellido>").append("<numeroDocumento>").append(this.getDni())
+       .append("</numeroDocumento>").append("<cuil>").append(this.getCuil()).append("</cuil>").append("<email>").append(this.getEmail()).append("</email>").append("<login>").append(this.getLogin()).append("</login>")
+            .append("<fechaCarga>").append(SimpleDateFormat.getDateTimeInstance().format(this.getFechaCarga())).append("</fechaCarga>").append("<detalle>").append(this.getDetalles()).append("</detalle>").append("<genero>").append(this.getGenero().toString()).append("</genero>")
+            .append("<tipoDocu>").append(this.getTipoDocumento().toString()).append("</tipoDocu>").append("<tipoPersona>").append(this.getTiposPersona().toString()).append("</tipoPersona>")
+            .append("<estado>").append(this.getEstado()).append("</estado>");
+        return xml.toString();
     }
     
 }

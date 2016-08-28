@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="DulceJoseFinaPU" transaction-type="JTA">
-    <jta-data-source>jdbc/_dulceJosefina</jta-data-source>
+    <jta-data-source>jdbc/testFirebird</jta-data-source>
+    <class>com.dulcejosefina.entity.CajaEntradaSalida</class>
+    <class>com.dulcejosefina.entity.CompraProducto</class>
+    <class>com.dulcejosefina.entity.DetalleVentaSucursal</class>
+    <class>com.dulcejosefina.entity.HistoricoVentaSucursal</class>
+    <class>com.dulcejosefina.entity.ImagenProducto</class>
+    <class>com.dulcejosefina.entity.ModuloUsuario</class>
+    <class>com.dulcejosefina.entity.PackProducto</class>
+    <class>com.dulcejosefina.entity.PerfilUsuario</class>
+    <class>com.dulcejosefina.entity.Persona</class>
+    <class>com.dulcejosefina.entity.Producto</class>
+    <class>com.dulcejosefina.entity.Proveedor</class>
+    <class>com.dulcejosefina.entity.RolUsuario</class>
+    <class>com.dulcejosefina.entity.StockProducto</class>
+    <class>com.dulcejosefina.entity.Sucursal</class>
+    <class>com.dulcejosefina.entity.Tarjeta</class>
+    <class>com.dulcejosefina.entity.VentaProducto</class>
+    <class>com.dulcejosefina.entity.VentaSucursal</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
-      <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
     </properties>
   </persistence-unit>
 </persistence>

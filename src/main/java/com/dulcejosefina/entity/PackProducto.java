@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.dulcejosefina.entity;
 
 import java.io.Serializable;
@@ -14,27 +9,29 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.TableGenerator;
 
-/**
- *
- * @author Edgardo
- */
 @Entity
-public class Pack implements Serializable {
+@NamedQueries({@NamedQuery(name = "PackProducto.fidAll",query = "SELECT p FROM PackProducto p")})
+public class PackProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Column(name = "ID_PACK")
+    @TableGenerator(name = "PackProductoIdGen",table = "ID_GEN_PACK_PROD", pkColumnName="FNAME",pkColumnValue="PackProducto", valueColumnName="FKEY",
+    allocationSize=1)
+    @Column(name = "ID_PACK_PRODUCTO")
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
     @Column(name = "DESCRIPCION", unique = true,nullable = false)
     private String descripcion;
     @OneToMany(cascade = {CascadeType.REFRESH},mappedBy = "packFK",orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<Compra> compra;
+    private List<CompraProducto> compra;
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "packFK",orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<Venta> venta;
-    
+    private List<VentaProducto> venta;
+    public PackProducto(){}
 
     public Long getId() {
         return id;
@@ -52,19 +49,19 @@ public class Pack implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public List<Compra> getCompra() {
+    public List<CompraProducto> getCompra() {
         return compra;
     }
 
-    public void setCompra(List<Compra> compra) {
+    public void setCompra(List<CompraProducto> compra) {
         this.compra = compra;
     }
 
-    public List<Venta> getVenta() {
+    public List<VentaProducto> getVenta() {
         return venta;
     }
 
-    public void setVenta(List<Venta> venta) {
+    public void setVenta(List<VentaProducto> venta) {
         this.venta = venta;
     }
 
@@ -80,19 +77,22 @@ public class Pack implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Pack)) {
+        if (!(object instanceof PackProducto)) {
             return false;
         }
-        Pack other = (Pack) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        PackProducto other = (PackProducto) object;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
         return "com.dulcejosefina.entity.PACK[ id=" + id + " ]";
     }
+    public String toXML(){
+        StringBuilder xml = new StringBuilder("<item>\n");
+                xml.append("<id>").append(this.getId()).append("</item>").append("<descripcion>").append(this.getDescripcion()).append("</descripcion>")
+                 .append("</item>");
     
+        return xml.toString();
+    }
 }

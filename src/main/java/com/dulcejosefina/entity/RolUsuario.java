@@ -6,21 +6,24 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 
 @Entity
-@NamedQueries({@NamedQuery(name = "Tarjeta.findAll",query = "SELECT t FROM Tarjeta t")})
-public class Tarjeta implements Serializable {
+public class RolUsuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Column(name = "ID_TARJETA")
+    @Column(name = "ID_ROL_USUARIO")    
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
-    @Column(name = "NOMBRE",unique = true,nullable = false)
-    private String nombre;
+    @Column(name = "CODIGOROLE",columnDefinition = "varchar(45)")
+    private String codigoRole;
+    @Column(name = "NOMBREROLE",columnDefinition = "varchar(45)")
+    private String nombreRole;
+    @OneToOne()
+    private Persona persona;
 
+    public RolUsuario(){}
     public Long getId() {
         return id;
     }
@@ -29,14 +32,29 @@ public class Tarjeta implements Serializable {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getCodigoRole() {
+        return codigoRole;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setCodigoRole(String codigoRole) {
+        this.codigoRole = codigoRole;
     }
-    
+
+    public String getNombreRole() {
+        return nombreRole;
+    }
+
+    public void setNombreRole(String nombreRole) {
+        this.nombreRole = nombreRole;
+    }
+
+    public Persona getPersona() {
+        return persona;
+    }
+
+    public void setPersona(Persona persona) {
+        this.persona = persona;
+    }
 
     @Override
     public int hashCode() {
@@ -48,23 +66,16 @@ public class Tarjeta implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Tarjeta)) {
+        if (!(object instanceof RolUsuario)) {
             return false;
         }
-        Tarjeta other = (Tarjeta) object;
+        RolUsuario other = (RolUsuario) object;
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "com.dulcejosefina.entity.Tarjeta[ id=" + id + " ]";
-    }
-    public String toXML(){
-    StringBuilder xml = new StringBuilder("<item>\n");
-            xml.append("<id>").append(this.getId()).append("</id>\n").append("<nombre>").append(this.getNombre()).append("</nombre>\n").append("</item>\n");
-            
-    return xml.toString();
-    
+        return "com.dulcejosefina.entity.Role[ id=" + id + " ]";
     }
     
 }

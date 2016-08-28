@@ -1,34 +1,37 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.dulcejosefina.entity;
+    package com.dulcejosefina.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.TableGenerator;
 
-/**
- *
- * @author Edgardo
- */
 @Entity
-public class Fabrica implements Serializable {
+@NamedQueries({@NamedQuery(name = "Proveedor.findAll", query = "SELECT p FROM Proveedor p")})
+public class Proveedor implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Column(name = "ID_FABRICA")
+    @TableGenerator(name = "ProveedorIdGen",table = "ID_GEN_PROVEEDOR", pkColumnName="FNAME",pkColumnValue="Proveedor", valueColumnName="FKEY",
+    allocationSize=1)
+    @Column(name = "ID_PROVEEDOR")
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
-    @Column(name = "NOMBRE")
+    @Column(name = "NOMBRE",nullable = false,unique = true)
     private String nombre;
-    @Column(name="DETALLES")
+    @Column(name="DETALLES",columnDefinition = "varchar(1000) default''")
     private String detalles;
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "proveedorFK",targetEntity = Producto.class)
+    private List<Producto>producto;
 
+    public Proveedor(){}
     public Long getId() {
         return id;
     }
@@ -53,6 +56,14 @@ public class Fabrica implements Serializable {
         this.detalles = detalles;
     }
 
+    public List<Producto> getProducto() {
+        return producto;
+    }
+
+    public void setProducto(List<Producto> producto) {
+        this.producto = producto;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -62,10 +73,10 @@ public class Fabrica implements Serializable {
 
     @Override
     public boolean equals(Object object) {        
-        if (!(object instanceof Fabrica)) {
+        if (!(object instanceof Proveedor)) {
             return false;
         }
-        Fabrica other = (Fabrica) object;
+        Proveedor other = (Proveedor) object;
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
@@ -75,7 +86,7 @@ public class Fabrica implements Serializable {
     }
     public String toXML(){
         StringBuilder xml = new StringBuilder("<item>\n");
-            xml.append("<id>").append(this.getId()).append("</id>\n").append("<nombre>").append(this.getNombre()).append("</nombre>\n").append("<detalles>").append(this.getDetalles()).append("</detalles>\n").append("</item>");            
+            xml.append("<id>").append(this.getId()).append("</id>\n").append("<nombre>").append(this.getNombre()).append("</nombre>\n").append("</item>");            
     return xml.toString();    
     }
     
