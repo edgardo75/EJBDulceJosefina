@@ -26,15 +26,17 @@ private EntityManager em;
     @WebMethod(operationName = "crearProveedor")
     public short crearProveedor(@WebParam(name = "nombreProveedor") String nombreProveedor, @WebParam(name = "detalles") String detalles) {
         Proveedor proveedor = new Proveedor();
-        proveedor.setNombre(nombreProveedor.toUpperCase());                
+        proveedor.setNombre(nombreProveedor.toUpperCase());  
+        proveedor.setDetalles(detalles);
         em.persist(proveedor);
         em.flush();
         return proveedor.getId().shortValue();
     }
 
+    @WebMethod
     public String selectAllProveedor(){
         StringBuilder lista = new StringBuilder( "<Lista>\n");
-        Query consulta = em.createNamedQuery("");
+        Query consulta = em.createNamedQuery("findAll.Proveedor");
         List<Proveedor> ListaProveedor = consulta.getResultList();
         
         for (Proveedor proveedor : ListaProveedor) {

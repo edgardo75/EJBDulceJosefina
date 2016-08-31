@@ -15,10 +15,10 @@ public class ImagenProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @TableGenerator(name = "ImagenProductoIdGen",table = "ID_GEN_IMAGEN_PROD", pkColumnName="FNAME",pkColumnValue="ImagenProducto", valueColumnName="FKEY",
+    @TableGenerator(name = "ImagenProductoIdGen",table = "ID_GEN_IMAGEN_PROD", pkColumnName="IMGNAME",pkColumnValue="ImagenProducto", valueColumnName="IMGKEY",
     allocationSize=1)
-    @Column(name = "ID_IMAGEN_PRODUCTO")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "ImagenProductoIdGen")
+    @Column(name = "ID_IMAGEN_PRODUCTO")    
     private Long id;
     @Column(name = "PATHIMAGEN")
     private String pathImagenEnDisco;

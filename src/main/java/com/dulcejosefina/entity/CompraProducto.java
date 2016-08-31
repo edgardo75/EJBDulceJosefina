@@ -18,10 +18,10 @@ public class CompraProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @TableGenerator(name = "CompraProductoIdGen",table = "ID_GEN_COMPRA_SUC", pkColumnName="FNAME",pkColumnValue="CompraProducto", valueColumnName="FKEY",
+    @TableGenerator(name = "CompraProductoIdGen",table = "ID_GEN_COMPRA_SUC", pkColumnName="CONAME",pkColumnValue="CompraProducto", valueColumnName="COKEY",
     allocationSize=1)
-    @Column(name = "ID_COMPRA_PRODUCTO")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "CompraProductoIdGen")
+    @Column(name = "ID_COMPRA_PRODUCTO")    
     private Long id;
     @Column(name = "PRESENTACION",columnDefinition = "INTEGER default '0'")
     private BigDecimal presentacion;

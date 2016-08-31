@@ -17,11 +17,11 @@ import javax.persistence.Temporal;
 public class StockProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @TableGenerator(name = "StockProductoIdGen",table = "ID_GEN_STOCK_PROD", pkColumnName="FNAME",pkColumnValue="StockProducto", valueColumnName="FKEY",
+    @TableGenerator(name = "StockProductoIdGen",table = "ID_GEN_STOCK_PROD", pkColumnName="STKNAME",pkColumnValue="StockProducto", valueColumnName="STKKEY",
     allocationSize=1)
     @Column(name = "ID_STOCK_PRODUCTO")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "StockProductoIdGen")
+    @Id    
     private Long id;    
     @Column(name = "PRECIO_UNITARIO_COMPRA",precision = 15,scale = 3,columnDefinition = "DECIMAL(15,3) DEFAULT'0.000'")
     private BigDecimal precioUnitarioCompra;

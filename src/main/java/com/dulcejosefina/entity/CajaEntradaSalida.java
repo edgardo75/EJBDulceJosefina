@@ -17,10 +17,10 @@ import javax.persistence.TemporalType;
 public class CajaEntradaSalida implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @TableGenerator(name = "CajaEntradaSalidaIdGen",table = "ID_GEN_CAJA", pkColumnName="FNAME",pkColumnValue="CajaEntradaSalida", valueColumnName="FKEY",
-    allocationSize=1)
+    @TableGenerator(name = "CajaEntradaSalidaIdGen",table = "ID_GEN_CAJA", pkColumnName="CESNAME",pkColumnValue="CajaEntradaSalida", valueColumnName="CESKEY",
+    allocationSize=1)    
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "CajaEntradaSalidaIdGen")
     @Column(name = "ID_CAJA_ENTRADA_SALIDA")
-    @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
     @Column(name = "FECHA")
     @Temporal(javax.persistence.TemporalType.DATE)

@@ -18,11 +18,11 @@ import javax.persistence.Temporal;
 public class VentaProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @TableGenerator(name = "VentaProducto",table = "ID_GEN_PROD", pkColumnName="FNAME",pkColumnValue="VentaProducto", valueColumnName="FKEY",
+    @TableGenerator(name = "VentaProductoIdGen",table = "ID_GEN_VTAPROD", pkColumnName="VTAPRODNAME",pkColumnValue="VentaProducto", valueColumnName="VTAPRODKEY",
     allocationSize=1)
-    @Column(name = "ID_VENTA_PRODUCTO")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "VentaProductoIdGen")
+    @Id    
+    @Column(name = "ID_VENTA_PRODUCTO")    
     private Long id;
     @Column(name = "PRESENTACION",columnDefinition = "INTEGER default '0'")
     private Integer presentacion;

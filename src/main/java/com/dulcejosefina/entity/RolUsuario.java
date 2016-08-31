@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.TableGenerator;
 
 @Entity
 public class RolUsuario implements Serializable {
@@ -14,7 +15,9 @@ public class RolUsuario implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "ID_ROL_USUARIO")    
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @TableGenerator(name = "RolUsuarioIdGen",table = "ID_GEN_ROLUSER", pkColumnName="ROLUSERNAME",pkColumnValue="RolUsuario", valueColumnName="ROLUSERKEY",
+    allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "RolUsuarioIdGen")
     private Long id;
     @Column(name = "CODIGOROLE",columnDefinition = "varchar(45)")
     private String codigoRole;

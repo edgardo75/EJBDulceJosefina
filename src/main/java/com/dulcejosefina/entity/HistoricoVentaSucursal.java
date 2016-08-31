@@ -18,10 +18,10 @@ public class HistoricoVentaSucursal implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @TableGenerator(name = "HistoricoVentaSucursalIdGen",table = "ID_GEN_HIST_VENTA_SUC", pkColumnName="FNAME",pkColumnValue="HistoricoVentaSucursal", valueColumnName="FKEY",
+    @TableGenerator(name = "HistoricoVentaSucursalIdGen",table = "ID_GEN_HIST_VENTA_SUC", pkColumnName="HISTSUCNAME",pkColumnValue="HistoricoVentaSucursal", valueColumnName="HISTSUCKEY",
     allocationSize=1)
-    @Column(name = "ID_HISTORICO_VENTA_SUCURSAL")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "HistoricoVentaSucursalIdGen")
+    @Column(name = "ID_HISTORICO_VENTA_SUCURSAL")    
     private Long id;
     @Column(name="FECHA_VENTA")
     @Temporal(javax.persistence.TemporalType.DATE)

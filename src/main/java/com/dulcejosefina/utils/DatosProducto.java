@@ -26,6 +26,12 @@ public class DatosProducto {
     private String fechaUltimaVenta;
     private String fechaUltimaActualizacion;
     private String detalle;
+    private double porcentajeCompra;
+    private double porcentajeVenta;
+    private DatosSucursal sucursal;
+    private DatosProveedor proveedor;
+    private DatosPackProducto packProducto;
+    
 
     public long getId() {
         return id;
@@ -145,6 +151,26 @@ public class DatosProducto {
 
     public void setDetalle(String detalle) {
         this.detalle = detalle;
+    }
+
+    public DatosSucursal getSucursal() {
+        return sucursal;
+    }
+
+    public DatosProveedor getProveedor() {
+        return proveedor;
+    }
+
+    public DatosPackProducto getPackProducto() {
+        return packProducto;
+    }
+
+    public double getPorcentajeCompra() {
+        return porcentajeCompra;
+    }
+
+    public double getPorcentajeVenta() {
+        return porcentajeVenta;
     }
     
     

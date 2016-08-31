@@ -21,11 +21,11 @@ import javax.persistence.Temporal;
 public class Sucursal implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @TableGenerator(name = "SucursalIdGen",table = "ID_GEN_SUC", pkColumnName="FNAME",pkColumnValue="Sucursal", valueColumnName="FKEY",
+    @TableGenerator(name = "SucursalIdGen",table = "ID_GEN_SUC", pkColumnName="SUCNAME",pkColumnValue="Sucursal", valueColumnName="SUCKEY",
     allocationSize=1)
-    @Column(name = "ID_SUCURSAL")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "SucursalIdGen")
+    @Column(name = "ID_SUCURSAL")    
+    @Id
     private Long id;
     @Column(name = "NOMBRE",nullable = false,unique = true)
     private String nombre;

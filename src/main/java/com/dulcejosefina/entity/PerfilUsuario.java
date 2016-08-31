@@ -9,14 +9,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.TableGenerator;
 
 @Entity
 public class PerfilUsuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @TableGenerator(name = "PerfilUsuarioIdGen",table = "ID_GEN_Perfil_User", pkColumnName="PERFNAME",pkColumnValue="PerfilUsuario", valueColumnName="PERFKEY",
+    allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "PerfilUsuarioIdGen")
     @Id
-    @Column(name = "ID_PERFIL_USUARIO")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @Column(name = "ID_PERFIL_USUARIO")    
     private Long id;
     @Column(name = "CODIGO_PERFIL",columnDefinition = "varchar(45)")
     private String codigoPerfil;

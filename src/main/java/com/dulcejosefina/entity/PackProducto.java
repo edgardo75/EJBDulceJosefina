@@ -20,10 +20,10 @@ public class PackProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @TableGenerator(name = "PackProductoIdGen",table = "ID_GEN_PACK_PROD", pkColumnName="FNAME",pkColumnValue="PackProducto", valueColumnName="FKEY",
+    @TableGenerator(name = "PackProductoIdGen",table = "ID_GEN_PACK_PROD", pkColumnName="PACKNAME",pkColumnValue="PackProducto", valueColumnName="PACKKEY",
     allocationSize=1)
-    @Column(name = "ID_PACK_PRODUCTO")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "PackProductoIdGen")
+    @Column(name = "ID_PACK_PRODUCTO")    
     private Long id;
     @Column(name = "DESCRIPCION", unique = true,nullable = false)
     private String descripcion;

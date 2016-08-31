@@ -16,6 +16,7 @@ public class DatosPersona {
     private String tipoPersona;
     private String genero;
     private String tipoDocumento;
+    private DatosTelefono datosTelefono;
 
     public long getId() {
         return id;
@@ -127,6 +128,10 @@ public class DatosPersona {
 
     public void setTipoDocumento(String tipoDocumento) {
         this.tipoDocumento = tipoDocumento;
+    }
+
+    public DatosTelefono getDatosTelefono() {
+        return datosTelefono;
     }
     
     

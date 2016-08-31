@@ -8,15 +8,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.TableGenerator;
 
 @Entity
 @NamedQueries({@NamedQuery(name = "Tarjeta.findAll",query = "SELECT t FROM Tarjeta t")})
 public class Tarjeta implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @TableGenerator(name = "TarjetaIdGen",table = "ID_GEN_TAR", pkColumnName="TARNAME",pkColumnValue="Tarjeta", valueColumnName="TARKEY",
+    allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "TarjetaIdGen")
     @Id
     @Column(name = "ID_TARJETA")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    
     private Long id;
     @Column(name = "NOMBRE",unique = true,nullable = false)
     private String nombre;

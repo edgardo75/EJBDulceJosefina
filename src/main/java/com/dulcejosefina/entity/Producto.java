@@ -23,11 +23,11 @@ import javax.persistence.Temporal;
 public class Producto implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @TableGenerator(name = "ProductoIdGen",table = "ID_GEN_PRODUCTO", pkColumnName="FNAME",pkColumnValue="Producto", valueColumnName="FKEY",
+    @TableGenerator(name = "ProductoIdGen",table = "ID_GEN_PRODUCTO", pkColumnName="PRONAME",pkColumnValue="Producto", valueColumnName="PROKEY",
     allocationSize=1)
-    @Column(name = "ID_PRODUCTO")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "ProductoIdGen")
+    @Id    
+    @Column(name = "ID_PRODUCTO")    
     private Long id;    
     @Column(name = "DESCRIPCION",unique = true,nullable = false)
     private String descripcion;
@@ -61,6 +61,10 @@ public class Producto implements Serializable {
     @Column(name = "FECHA_ULTIMA_ACTUALIZACION")
     @Temporal(javax.persistence.TemporalType.DATE)    
     private Date fechaUltimaActualizacion;
+    @Column(name = "PORCENTAJE_COMPRA",columnDefinition = "DECIMAL(12,2)DEFAULT'0'")
+    private double porcentajeCompra;
+    @Column(name = "PORCENTAJE_VENTA",columnDefinition = "DECIMAL(12,2)DEFAULT'0'")
+    private double porcentajeVenta;
     @Column(name = "DETALLE_PRODUCTO",columnDefinition = "VARCHAR(255) DEFAULT''")
     private String detalleProducto;
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = Proveedor.class,optional = false)
@@ -267,6 +271,22 @@ public class Producto implements Serializable {
         this.fechaCantidadIngresada = fechaCantidadIngresada;
     }
 
+    public double getPorcentajeCompra() {
+        return porcentajeCompra;
+    }
+
+    public void setPorcentajeCompra(double porcentajeCompra) {
+        this.porcentajeCompra = porcentajeCompra;
+    }
+
+    public double getPorcentajeVenta() {
+        return porcentajeVenta;
+    }
+
+    public void setPorcentajeVenta(double porcentajeVenta) {
+        this.porcentajeVenta = porcentajeVenta;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -306,7 +326,9 @@ public class Producto implements Serializable {
                 .append("<detalle>").append(this.getDetalleProducto()).append("</detalle>\n")
                 .append("<proveedorId>").append(this.getProveedorFK().getId()).append("</proveedorId>\n")
                 .append("<personaId>").append(this.getPersonaFK().getId()).append("</personaId>\n")
-                .append("<sucursalId>").append(this.getSucursalFK().getId()).append("</sucursalId>\n");
+                .append("<sucursalId>").append(this.getSucursalFK().getId()).append("</sucursalId>\n")
+                .append("<porcentajeCompra>").append(this.getPorcentajeCompra()).append("</porcentajeCompra")
+                .append("<porcentajeVenta>").append(this.getPorcentajeVenta()).append("</porcentajeVenta>");
                 if(!this.getCompra().isEmpty()){
                     xml.append("<detalleCompra>\n");
                     StringBuilder detalleCompra = new StringBuilder(5);

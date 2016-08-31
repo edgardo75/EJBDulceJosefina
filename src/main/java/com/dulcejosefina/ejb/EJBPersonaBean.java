@@ -7,15 +7,17 @@ package com.dulcejosefina.ejb;
 
 import com.dulcejosefina.entity.Genero;
 import com.dulcejosefina.entity.Persona;
+import com.dulcejosefina.entity.Telefono;
 import com.dulcejosefina.entity.TipoDocumento;
 import com.dulcejosefina.entity.TipoPersona;
 import com.dulcejosefina.utils.DatosPersona;
+import com.dulcejosefina.utils.DatosTelefono;
 import com.dulcejosefina.utils.ProjectHelpers;
+import com.dulcejosefina.utils.TelefonoItem;
 import com.dulcejosefina.utils.ValidateClientandUserData;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
@@ -47,38 +49,39 @@ public class EJBPersonaBean {
     
     }
     @WebMethod
-    public long crearEmpleado(String xmlEmpleado) {
+    public long crearPersona(String xmlPersona) {
         long retorno;
-        DatosPersona getDatosEmpleado = transformarEmpleado(xmlEmpleado);
-        System.out.println("HOLA \n "+getDatosEmpleado.getApellido());
+        DatosPersona getDatosPersona = (DatosPersona) transformarXmlToObjetXstream(xmlPersona);
         
-        retorno = (!getDatosEmpleado.getTipoPersona().equalsIgnoreCase("cliente")?chequearCamposRequeridos(getDatosEmpleado):1);
+        System.out.println("HOLA \n "+getDatosPersona.getApellido());
+        
+        retorno = (!getDatosPersona.getTipoPersona().equalsIgnoreCase("cliente")?chequearCamposRequeridos(getDatosPersona):1);
         if(retorno==1){
-            if(validarCamposRequeridosNombreYApellido(getDatosEmpleado)){         
+            if(validarCamposRequeridosNombreYApellido(getDatosPersona)){         
                 
-                            if(!validarNumeroIdentificacionPersonalYEmail(getDatosEmpleado)){
+                            if(!validarNumeroIdentificacionPersonalYEmail(getDatosPersona)){
                                 
-                                retorno = verificarDatosDniCuilYLogin(getDatosEmpleado);
+                                retorno = verificarDatosDniCuilYLogin(getDatosPersona);
                                 
                                 
 
                                 System.out.println("VALOR RETORNADO LUEGO DE VERIFICAR "+retorno);
-                                System.out.println("VALOR DE CUIL "+getDatosEmpleado.getCuil().isEmpty());
-                                System.out.println("VALOR DE DNI "+getDatosEmpleado.getDni());
-                                System.out.println("VALOR DEL ID "+getDatosEmpleado.getId());
+                                System.out.println("VALOR DE CUIL "+getDatosPersona.getCuil().isEmpty());
+                                System.out.println("VALOR DE DNI "+getDatosPersona.getDni());
+                                System.out.println("VALOR DEL ID "+getDatosPersona.getId());
                                 
-                                if(getDatosEmpleado.getId()==0){
+                                if(getDatosPersona.getId()==0){
                                     switch((int)retorno){
                                         case 1:retorno=-6;
                                         break;
                                         case 2:retorno=-7;
                                         default:{
-                                            retorno = procesarEmpleado(getDatosEmpleado);
+                                            retorno = procesarEmpleado(getDatosPersona);
                                         }
 
                                     }
                                 }else{
-                                    retorno = actualizarDatosEmpleado(getDatosEmpleado);
+                                    retorno = actualizarDatosPersona(getDatosPersona);
 
                                 }
 
@@ -90,11 +93,15 @@ public class EJBPersonaBean {
         return retorno;
     }
 
-    private DatosPersona transformarEmpleado(String xmlEmpleado) {
+    private Object transformarXmlToObjetXstream(String xml) {
         XStream xstream = new XStream(new StaxDriver());
-        xstream.alias("empleado", DatosPersona.class);
+        xstream.alias("persona", DatosPersona.class);
+        xstream.alias("datosTelefono", DatosTelefono.class);
+        xstream.addImplicitCollection(DatosTelefono.class, "datosTelefono");
         
-        return (DatosPersona) xstream.fromXML(xmlEmpleado);
+        
+        
+        return xstream.fromXML(xml);
     }
 
     private boolean buscarLogin(String login) {
@@ -108,15 +115,15 @@ public class EJBPersonaBean {
         return (consulta.setParameter("dni", String.valueOf(dni)).getResultList().size()==1);
     }
 
-    private long procesarEmpleado(DatosPersona datosEmpleado) {
+    private long procesarEmpleado(DatosPersona datosPersona) {
         Persona persona = new Persona();        
-        persona=persistirDatos(persona,datosEmpleado);
-        em.persist(persona);
+        persona=persistirDatosPersona(persona,datosPersona);
+        persona = persistirListaTelefonoPersona(persona,datosPersona);
         return persona.getId();
         
     }
     @WebMethod
-    public String selectAllEmpleadosYJefes(){
+    public String selectAllEmpleadosJefesyCliente(){
         ProjectHelpers passTry = new ProjectHelpers();
         StringBuilder xml = new StringBuilder("<Lista>\n");
         Query consulta = em.createNamedQuery("personaFindAll");
@@ -138,31 +145,31 @@ public class EJBPersonaBean {
         return xml.append("</Lista>").toString();
     }
 
-    private long chequearCamposRequeridos(DatosPersona datosEmpleado) {
+    private long chequearCamposRequeridos(DatosPersona datosPersona) {
         
-        return (datosEmpleado.getNombre().isEmpty()||datosEmpleado.getApellido().isEmpty()||datosEmpleado.getLogin().isEmpty()||datosEmpleado.getPassword().isEmpty()?-1:1);
+        return (datosPersona.getNombre().isEmpty()||datosPersona.getApellido().isEmpty()||datosPersona.getLogin().isEmpty()||datosPersona.getPassword().isEmpty()?-1:1);
     }
 
-    private boolean validarCamposRequeridosNombreYApellido(DatosPersona datosEmpleado) {
+    private boolean validarCamposRequeridosNombreYApellido(DatosPersona datosPersona) {
         
         
-        return (validateDataUser.validate(datosEmpleado.getNombre(), nombreyApellidoPattern)&&validateDataUser.validate(datosEmpleado.getApellido(), nombreyApellidoPattern));
+        return (validateDataUser.validate(datosPersona.getNombre(), nombreyApellidoPattern)&&validateDataUser.validate(datosPersona.getApellido(), nombreyApellidoPattern));
         
       
     }
 
-    private boolean validarNumeroIdentificacionPersonalYEmail(DatosPersona datosEmpleado) {
+    private boolean validarNumeroIdentificacionPersonalYEmail(DatosPersona datosPersona) {
         boolean retorno = false;
-        if(!String.valueOf(datosEmpleado.getDni()).isEmpty()){
-            retorno = validateDataUser.validate(String.valueOf(datosEmpleado.getDni()), numberPattern_Dni);
+        if(!String.valueOf(datosPersona.getDni()).isEmpty()){
+            retorno = validateDataUser.validate(String.valueOf(datosPersona.getDni()), numberPattern_Dni);
             
         }else{
-            if(!String.valueOf(datosEmpleado.getCuil()).isEmpty()){
-                retorno = validateDataUser.validate(String.valueOf(datosEmpleado.getCuil()), numberPattern_Dni);
+            if(!String.valueOf(datosPersona.getCuil()).isEmpty()){
+                retorno = validateDataUser.validate(String.valueOf(datosPersona.getCuil()), numberPattern_Dni);
             
             }else{
-                if(!datosEmpleado.getEmail().isEmpty()){
-                    retorno = validateDataUser.isValidEmailAddress(datosEmpleado.getEmail());
+                if(!datosPersona.getEmail().isEmpty()){
+                    retorno = validateDataUser.isValidEmailAddress(datosPersona.getEmail());
             
                 }
             }
@@ -173,17 +180,17 @@ public class EJBPersonaBean {
         
     }
 
-    private long verificarDatosDniCuilYLogin(DatosPersona datosEmpleado) {
+    private long verificarDatosDniCuilYLogin(DatosPersona datosPersona) {
         long retorno =0L;
-        if(datosEmpleado.getTipoPersona().equalsIgnoreCase("cliente")&&(!datosEmpleado.getDni().isEmpty()&& !datosEmpleado.getCuil().isEmpty())){
-            retorno= (buscarDNI(datosEmpleado.getDni())||buscarCuil(datosEmpleado.getCuil())?2:0);
+        if(datosPersona.getTipoPersona().equalsIgnoreCase("cliente")&&(!datosPersona.getDni().isEmpty()&& !datosPersona.getCuil().isEmpty())){
+            retorno= (buscarDNI(datosPersona.getDni())||buscarCuil(datosPersona.getCuil())?2:0);
         }else{
             
-            if(!datosEmpleado.getCuil().isEmpty()&&!datosEmpleado.getDni().isEmpty()){
-                retorno= (buscarDNI(datosEmpleado.getDni())||buscarCuil(datosEmpleado.getCuil())?2:0);
+            if(!datosPersona.getCuil().isEmpty()&&!datosPersona.getDni().isEmpty()){
+                retorno= (buscarDNI(datosPersona.getDni())||buscarCuil(datosPersona.getCuil())?2:0);
             }else{
-                if(!datosEmpleado.getLogin().isEmpty()){
-                    retorno= (buscarLogin(datosEmpleado.getLogin())?1:0);
+                if(!datosPersona.getLogin().isEmpty()){
+                    retorno= (buscarLogin(datosPersona.getLogin())?1:0);
 
                 }
             }
@@ -199,15 +206,16 @@ public class EJBPersonaBean {
         return (consulta.setParameter("cuil", String.valueOf(cuil)).getResultList().size()==1);
     }
 
-    private long actualizarDatosEmpleado(DatosPersona datosEmpleado) {
-        Persona empleado = em.find(Persona.class, datosEmpleado.getId());
+    private long actualizarDatosPersona(DatosPersona datosPersona) {
+        Persona persona = em.find(Persona.class, datosPersona.getId());
         
-        if(empleado!=null){    
-            System.out.print("valores de empleado "+datosEmpleado.getTipoPersona()+" "+empleado.getTiposPersona());
-            empleado = persistirDatos(empleado, datosEmpleado);
-            em.merge(empleado);
+        if(persona!=null){    
+            
+            persona = persistirDatosPersona(persona, datosPersona);
+            persona = persistirListaTelefonoPersona(persona, datosPersona);
+            em.merge(persona);
             em.flush();
-            return empleado.getId();
+            return persona.getId();
         }else{
             return -3;
         }
@@ -216,38 +224,51 @@ public class EJBPersonaBean {
         
     }
 
-    private Persona persistirDatos(Persona persona, DatosPersona datosEmpleado) {
+    private Persona persistirDatosPersona(Persona persona, DatosPersona datosPersona) {
+        
+        persona = datosRequeridosImportantes(persona,datosPersona);
+        persona = datosSecundarios(persona,datosPersona);
+        
+        em.persist(persona);
+        
+        return persona;
+    }
+
+    private Persona datosRequeridosImportantes(Persona persona, DatosPersona datosPersona) {
         ProjectHelpers passworTry = new ProjectHelpers();
-         persona.setNombre(datosEmpleado.getNombre());
-        persona.setApellido(datosEmpleado.getApellido());
-        if(!datosEmpleado.getLogin().isEmpty()){
-            persona.setLogin(datosEmpleado.getLogin());
+         persona.setNombre(datosPersona.getNombre());
+        persona.setApellido(datosPersona.getApellido());
+        if(!datosPersona.getLogin().isEmpty()){
+            persona.setLogin(datosPersona.getLogin());
         }
-        if(!datosEmpleado.getPassword().isEmpty()){
-            persona.setPassword(passworTry.encrypt(datosEmpleado.getPassword()));
+        if(!datosPersona.getPassword().isEmpty()){
+            persona.setPassword(passworTry.encrypt(datosPersona.getPassword()));
             persona.setKeyPassword(passworTry.encryptionKey);
         }
         
-        if(!datosEmpleado.getDni().isEmpty()){
+        if(!datosPersona.getDni().isEmpty()){
             
-            persona.setDni(Integer.valueOf(datosEmpleado.getDni()));
+            persona.setDni(Integer.valueOf(datosPersona.getDni()));
         }
-        if(!datosEmpleado.getCuil().isEmpty()){
+        if(!datosPersona.getCuil().isEmpty()){
         
-            persona.setCuil(Integer.valueOf(datosEmpleado.getCuil()));
+            persona.setCuil(Integer.valueOf(datosPersona.getCuil()));
         
         }
         
-        persona.setEstado('1');
+        persona.setEstado(datosPersona.getEstado());
         persona.setFechaCarga(new Date());
-        
-        switch(datosEmpleado.getGenero()){
+        return persona;
+    }
+
+    private Persona datosSecundarios(Persona persona, DatosPersona datosPersona) {
+        switch(datosPersona.getGenero()){
            case "FEMENINO":persona.setGenero(Genero.FEMENINO);
            break;
            
            default: persona.setGenero(Genero.MASCULINO);
         }
-        switch(datosEmpleado.getTipoDocumento()){
+        switch(datosPersona.getTipoDocumento()){
             case "LC":persona.setTipoDocumento(TipoDocumento.LC);
             break;
             case "LE":persona.setTipoDocumento(TipoDocumento.LE);
@@ -258,21 +279,46 @@ public class EJBPersonaBean {
             default:persona.setTipoDocumento(TipoDocumento.DNI);
         
         }
-        switch(datosEmpleado.getTipoPersona()){
+        switch(datosPersona.getTipoPersona()){
             case "JEFE":persona.setTiposPersona(TipoPersona.JEFE);
             break;
             case "CLIENTE":persona.setTiposPersona(TipoPersona.CLIENTE);
             break;
             default:persona.setTiposPersona(TipoPersona.EMPLEADO);
         }
-        if(!datosEmpleado.getEmail().isEmpty()){
-            persona.setEmail(datosEmpleado.getEmail());
+        if(!datosPersona.getEmail().isEmpty()){
+            persona.setEmail(datosPersona.getEmail());
         }else{
          persona.setEmail("");
         }
         
-        persona.setDetalles(datosEmpleado.getDetalle());
-        System.out.print("VALOR DE CUIL AND DNI "+persona.getCuil()+" "+persona.getDni());
+        persona.setDetalles(datosPersona.getDetalle());
+        return persona;
+    }
+
+    private Persona persistirListaTelefonoPersona(Persona persona, DatosPersona datosPersona) {
+        if(!persona.getListaTelefono().isEmpty()){
+            persona.getListaTelefono().clear();
+            em.flush();
+            List<TelefonoItem>lista = datosPersona.getDatosTelefono().getList();
+            for(TelefonoItem telefono:lista){
+                Telefono item = em.find(Telefono.class,telefono.getId());
+                if(item==null){
+                    Telefono tel = new Telefono();
+                    tel.setNumero(telefono.getNumero());
+                    tel.setPrefijo(tel.getPrefijo());
+                    tel.setPersonaTelefono(persona);
+                    em.merge(tel);
+                }
+                
+            }
+            Query consulta = em.createQuery("SELECT t FROM Telefono t WHERE t.personaTelefono.id =:id");
+            consulta.setParameter("id", persona.getId());
+            List<Telefono>listaTelefonoPersona = consulta.getResultList();
+            persona.setListaTelefono(listaTelefonoPersona);
+            em.merge(persona);
+            
+        }
         return persona;
     }
 

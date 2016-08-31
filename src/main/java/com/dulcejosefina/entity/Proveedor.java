@@ -14,15 +14,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
 
 @Entity
-@NamedQueries({@NamedQuery(name = "Proveedor.findAll", query = "SELECT p FROM Proveedor p")})
+@NamedQueries({@NamedQuery(name = "findAll.Proveedor", query = "SELECT p FROM Proveedor p")})
 public class Proveedor implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @TableGenerator(name = "ProveedorIdGen",table = "ID_GEN_PROVEEDOR", pkColumnName="FNAME",pkColumnValue="Proveedor", valueColumnName="FKEY",
+    @TableGenerator(name = "ProveedorIdGen",table = "ID_GEN_PROVEEDOR", pkColumnName="PRVNAME",pkColumnValue="Proveedor", valueColumnName="PRVKEY",
     allocationSize=1)
     @Column(name = "ID_PROVEEDOR")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "ProveedorIdGen")
+    @Id    
     private Long id;
     @Column(name = "NOMBRE",nullable = false,unique = true)
     private String nombre;
@@ -86,7 +86,8 @@ public class Proveedor implements Serializable {
     }
     public String toXML(){
         StringBuilder xml = new StringBuilder("<item>\n");
-            xml.append("<id>").append(this.getId()).append("</id>\n").append("<nombre>").append(this.getNombre()).append("</nombre>\n").append("</item>");            
+            xml.append("<id>").append(this.getId()).append("</id>\n").append("<nombre>").append(this.getNombre()).append("</nombre>\n").append("<detalle>")
+                    .append(this.getDetalles()).append("</detalle>").append("</item>");            
     return xml.toString();    
     }
     

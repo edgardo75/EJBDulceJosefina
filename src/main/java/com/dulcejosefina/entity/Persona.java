@@ -24,14 +24,14 @@ import javax.persistence.TemporalType;
 
 @Entity
 @NamedQueries({@NamedQuery(name = "empleadoFindAllEmpleadoYJefe",query = "SELECT p FROM Persona p WHERE p.tiposPersona = com.dulcejosefina.entity.TipoPersona.EMPLEADO OR p.tiposPersona = com.dulcejosefina.entity.TipoPersona.JEFE"),
-@NamedQuery(name="personaFindAll",query = "SELECT p FROM Persona p ORDER BY p.fechaCarga desc")})
+@NamedQuery(name="personaFindAll",query = "SELECT p FROM Persona p WHERE p.estado = '1' ORDER BY p.fechaCarga desc")})
 public class Persona implements Serializable {
 
     private static final long serialVersionUID = 1L;    
-    @Id
-    @TableGenerator(name = "PersonaIdGen",table = "ID_GEN_PER", pkColumnName="FNAME",pkColumnValue="Persona", valueColumnName="FKEY",
+    @TableGenerator(name = "PersonaIdGen",table = "ID_GEN_PER", pkColumnName="PERNAME",pkColumnValue="Persona", valueColumnName="PERKEY",
     allocationSize=1)
     @GeneratedValue(generator = "PersonaIdGen",strategy = GenerationType.TABLE)
+    @Id    
     @Column(name = "ID_PERSONA")
     private long id;
     @Column(name = "NOMBRE")
@@ -53,7 +53,7 @@ public class Persona implements Serializable {
     @Column(name = "FECHACARGA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCarga;
-    @Column(name = "ESTADO")
+    @Column(name = "ESTADO",columnDefinition = "VARCHAR(1) DEFAULT'1'")
     private char estado;
     @Column(name = "DETALLES",columnDefinition = "VARCHAR(255) DEFAULT ''")
     private String detalles;
@@ -66,12 +66,21 @@ public class Persona implements Serializable {
     @Column(name = "TIPO_PERSONA",columnDefinition = "VARCHAR(8) DEFAULT ''")
     @Enumerated(EnumType.STRING)
     private TipoPersona tiposPersona;
+    @Column(name = "PUNTOS_CLIENTE_PREFENCIAL",columnDefinition = "INTEGER DEFAULT'0'")
+    private Integer puntosClientePrefencial;
+    @Column(name = "CLIENTE_PREFERENCIAL",columnDefinition = "CHAR DEFAULT'0'")
+    private char clientePerefencial;        
+    @Column(name = "FECHA_ULTIMA_COMPRA_CLIENTE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaUltimaCompraCliente;
     @OneToOne(orphanRemoval = true,fetch = FetchType.LAZY,mappedBy = "perfilPersona")
     private PerfilUsuario perfil;
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "personaFK")
     private List<Producto> producto;
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "persona")
     private List<VentaSucursal> ventaSucursal;
+    @OneToMany(orphanRemoval = true,cascade = CascadeType.REMOVE,fetch = FetchType.LAZY,mappedBy = "personaTelefono")
+    private List<Telefono>listaTelefono;
     
     public Persona(){}
     public Long getId() {
@@ -218,6 +227,46 @@ public class Persona implements Serializable {
         this.keyPassword = keyPassword;
     }
 
+    public Integer getPuntosClientePrefencial() {
+        return puntosClientePrefencial;
+    }
+
+    public void setPuntosClientePrefencial(Integer puntosClientePrefencial) {
+        this.puntosClientePrefencial = puntosClientePrefencial;
+    }
+
+    public char getPerefencial() {
+        return clientePerefencial;
+    }
+
+    public void setPerefencial(char clientePerefencial) {
+        this.clientePerefencial = clientePerefencial;
+    }
+
+    public char getClientePerefencial() {
+        return clientePerefencial;
+    }
+
+    public void setClientePerefencial(char clientePerefencial) {
+        this.clientePerefencial = clientePerefencial;
+    }
+
+    public List<Telefono> getListaTelefono() {
+        return listaTelefono;
+    }
+
+    public void setListaTelefono(List<Telefono> listaTelefono) {
+        this.listaTelefono = listaTelefono;
+    }
+
+    public Date getFechaUltimaCompraCliente() {
+        return fechaUltimaCompraCliente;
+    }
+
+    public void setFechaUltimaCompraCliente(Date fechaUltimaCompraCliente) {
+        this.fechaUltimaCompraCliente = fechaUltimaCompraCliente;
+    }
+
    
 
     @Override
@@ -259,7 +308,20 @@ public class Persona implements Serializable {
        .append("</numeroDocumento>").append("<cuil>").append(this.getCuil()).append("</cuil>").append("<email>").append(this.getEmail()).append("</email>").append("<login>").append(this.getLogin()).append("</login>")
             .append("<fechaCarga>").append(SimpleDateFormat.getDateTimeInstance().format(this.getFechaCarga())).append("</fechaCarga>").append("<detalle>").append(this.getDetalles()).append("</detalle>").append("<genero>").append(this.getGenero().toString()).append("</genero>")
             .append("<tipoDocu>").append(this.getTipoDocumento().toString()).append("</tipoDocu>").append("<tipoPersona>").append(this.getTiposPersona().toString()).append("</tipoPersona>")
-            .append("<estado>").append(this.getEstado()).append("</estado>");
+            .append("<estado>").append(this.getEstado()).append("</estado>").append("<clientePreferencial>").append(this.getPerefencial()).append("</clientePreferencial>")
+            .append("<puntosClientePreferencial>").append(this.getPuntosClientePrefencial()).append("</puntosClientePreferencial>")
+            .append("fechaUltimaCompraCliente>").append(SimpleDateFormat.getDateTimeInstance().format(this.getFechaUltimaCompraCliente())).append("</fechaUltimaCompraCliente>");
+            xml.append("<telefono>");
+            if(!this.getListaTelefono().isEmpty()){
+                
+                
+                for(Telefono tel:listaTelefono){
+                
+                    xml.append(tel.toXML());
+                }
+                
+            }
+            xml.append("</telefono>");
         return xml.toString();
     }
     

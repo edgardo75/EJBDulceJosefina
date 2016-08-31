@@ -16,10 +16,10 @@ public class DetalleVentaSucursal implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @TableGenerator(name = "DetalleVentaSucursalIdGen",table = "ID_GEN_DETALLE_VENTA_SUC", pkColumnName="FNAME",pkColumnValue="DetalleVentaSucursal", valueColumnName="FKEY",
+    @TableGenerator(name = "DetalleVentaSucursalIdGen",table = "ID_GEN_DETALLE_VENTA_SUC", pkColumnName="DETSUCNAME",pkColumnValue="DetalleVentaSucursal", valueColumnName="DETSUCKEY",
     allocationSize=1)
-    @Column(name = "ID_DETALLE_VENTA_SUCURSAL")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "DetalleVentaSucursalIdGen")
+    @Column(name = "ID_DETALLE_VENTA_SUCURSAL")    
     private Long id;
     @Column(name = "SUBTOTAL",columnDefinition = "DECIMAL(15,3) DEFAULT'0.000'")
     private BigDecimal subtotal;
