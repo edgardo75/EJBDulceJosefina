@@ -2,11 +2,11 @@ package com.dulcejosefina.utils;
 
 public class DatosPersona {
     
-    private int id;
+    private long id;
     private String nombre;
     private String apellido;
-    private String dni;
-    private String cuil;
+    private long dni;
+    private long cuil;
     private String email;
     private String login;
     private String password;
@@ -16,6 +16,8 @@ public class DatosPersona {
     private String tipoPersona;
     private String genero;
     private String tipoDocumento;
+    private int puntosClientePrefencial;
+    private char clientePerefencial;
     private DatosTelefono datosTelefono;
 
     public long getId() {
@@ -42,19 +44,19 @@ public class DatosPersona {
         this.apellido = apellido;
     }
 
-    public String getDni() {
+    public long getDni() {
         return dni;
     }
 
-    public void setDni(String dni) {
+    public void setDni(long dni) {
         this.dni = dni;
     }
 
-    public String getCuil() {
+    public long getCuil() {
         return cuil;
     }
 
-    public void setCuil(String cuil) {
+    public void setCuil(long cuil) {
         this.cuil = cuil;
     }
 
@@ -132,6 +134,22 @@ public class DatosPersona {
 
     public DatosTelefono getDatosTelefono() {
         return datosTelefono;
+    }
+
+    public int getPuntosClientePrefencial() {
+        return puntosClientePrefencial;
+    }
+
+    public void setPuntosClientePrefencial(int puntosClientePrefencial) {
+        this.puntosClientePrefencial = puntosClientePrefencial;
+    }
+
+    public char getClientePerefencial() {
+        return clientePerefencial;
+    }
+
+    public void setClientePerefencial(char clientePerefencial) {
+        this.clientePerefencial = clientePerefencial;
     }
     
     

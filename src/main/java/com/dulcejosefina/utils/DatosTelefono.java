@@ -12,10 +12,10 @@ import java.util.List;
  * @author Edgardo
  */
 public class DatosTelefono {
-   private List<TelefonoItem>datosTelefono;
+   private List<TelefonoItem>list;
 
     public List<TelefonoItem> getList() {
-        return datosTelefono;
+        return list;
     }
    
    

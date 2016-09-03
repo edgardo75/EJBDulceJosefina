@@ -90,7 +90,7 @@ public class PackProducto implements Serializable {
     }
     public String toXML(){
         StringBuilder xml = new StringBuilder("<item>\n");
-                xml.append("<id>").append(this.getId()).append("</item>").append("<descripcion>").append(this.getDescripcion()).append("</descripcion>")
+                xml.append("<id>").append(this.getId()).append("</id>").append("<descripcion>").append(this.getDescripcion()).append("</descripcion>")
                  .append("</item>");
     
         return xml.toString();

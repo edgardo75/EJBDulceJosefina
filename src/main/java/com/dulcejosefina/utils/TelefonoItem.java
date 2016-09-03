@@ -11,18 +11,23 @@ package com.dulcejosefina.utils;
  */
 public class TelefonoItem {
      private long id;
-    private long numero;
-    private long prefijo;
+     private long idPersonaTelefono;
+    private String numero;
+    private String prefijo;
 
     public long getId() {
         return id;
     }
 
-    public long getNumero() {
+    public long getIdPersonaTelefono() {
+        return idPersonaTelefono;
+    }
+
+    public String getNumero() {
         return numero;
     }
 
-    public long getPrefijo() {
+    public String getPrefijo() {
         return prefijo;
     }
     

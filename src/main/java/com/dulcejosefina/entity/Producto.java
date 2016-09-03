@@ -11,15 +11,18 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 
 @Entity
 @NamedQueries({@NamedQuery(name = "Producto.fidAll",query = "SELECT p FROM Producto p")})
+@Table(name = "PRODUCTO",indexes = {@Index(name = "codigoBarra_Index",columnList = "CODIGO_BARRA"),})
 public class Producto implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,7 +38,7 @@ public class Producto implements Serializable {
     private BigDecimal precioUnitarioCompra;
     @Column(name = "PRECIO_UNITARIO_VENTA",precision = 15,scale = 3,columnDefinition = "DECIMAL(15,3) default'0.000'")
     private BigDecimal precioUnitarioVenta;
-    @Column(name = "CODIGO_BARRA",unique = true,columnDefinition = "VARCHAR(100)DEFAULT'null'")
+    @Column(name = "CODIGO_BARRA",columnDefinition = "VARCHAR(100)DEFAULT'null'")
     private String codigoBarra;
     @Column(name = "PRIMER_CANTIDAD_INICIAL",columnDefinition = "INTEGER DEFAULT'0'")
     private int cantidadInicial;

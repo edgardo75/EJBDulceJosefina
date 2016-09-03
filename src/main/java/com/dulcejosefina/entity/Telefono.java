@@ -6,12 +6,14 @@
 package com.dulcejosefina.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
 
 /**
@@ -30,8 +32,20 @@ public class Telefono implements Serializable {
     private long numero;
     @Column(name = "PREFIJO")
     private long prefijo;
-    @ManyToOne()
-    private Persona personaTelefono;
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "telefono")
+    private List<PersonaTelefono> telefonoPersona;
+
+    public Telefono() {
+    }
+
+    public Telefono(long numero, long prefijo) {
+        this.numero = numero;
+        this.prefijo = prefijo;
+    }
+    
+    
+    
+    
     public Long getId() {
         return id;
     }
@@ -56,13 +70,16 @@ public class Telefono implements Serializable {
         this.prefijo = prefijo;
     }
 
-    public Persona getPersonaTelefono() {
-        return personaTelefono;
+    public List<PersonaTelefono> getTelefonoPersona() {
+        return telefonoPersona;
     }
 
-    public void setPersonaTelefono(Persona personaTelefono) {
-        this.personaTelefono = personaTelefono;
+    public void setTelefonoPersona(List<PersonaTelefono> telefonoPersona) {
+        this.telefonoPersona = telefonoPersona;
     }
+
+   
+  
 
     @Override
     public int hashCode() {
@@ -86,10 +103,8 @@ public class Telefono implements Serializable {
         return "com.dulcejosefina.entity.Telefono[ id=" + id + " ]";
     }
     public String toXML(){
-        String item ="<itemTelefono>"
-                + "<id>"+this.getId()+"</id>"
-                + "<numero>"+this.getNumero()+"</numero>"
-                + "<prefijo>"+this.getPrefijo()+"</prefijo>";
+        String item = "<id>" + this.getId() + "</id>" + "<numero>" + this.getNumero() + "</numero>" + "<prefijo>" + this.getPrefijo() + "</prefijo>";
+                
     return item;
     }
 }
