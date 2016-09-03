@@ -131,14 +131,8 @@ public class VentaProducto implements Serializable {
     }
     
       public String toXML(){
-    StringBuilder xml = new StringBuilder("<itemVenta>\n")
-            .append("<id>").append(this.getId()).append("</id>\n").append("<fecha>").append(this.getFechaVenta()).append("</fecha>\n")
-                    .append("<presentacion>").append(this.getPresentacion()).append("</presentacion>\n").append("<porcentaje>").append(this.getPorcentajeAplicado()).append("</porcentaje>\n")
-                    .append("<detalle>").append(this.getDetalle()).append("</detalle>\n")
-                    .append("<totalVenta>").append(this.getTotalVenta()).append("</totalVenta>\n")
-                    .append("<packId>").append(this.getPackFK().getId()).append("</packId>\n")
-            .append("</itemVenta>");
-        return xml.toString();
+    String xml = "<itemVenta>\n<id>" + this.getId() + "</id>\n" + "<fecha>" + this.getFechaVenta() + "</fecha>\n" + "<presentacion>" + this.getPresentacion() + "</presentacion>\n" + "<porcentaje>" + this.getPorcentajeAplicado() + "</porcentaje>\n" + "<detalle>" + this.getDetalle() + "</detalle>\n" + "<totalVenta>" + this.getTotalVenta() + "</totalVenta>\n" + "<packId>" + this.getPackFK().getId() + "</packId>\n" + "</itemVenta>";
+        return xml;
     }
     
 }

@@ -26,7 +26,8 @@ import javax.persistence.TemporalType;
 
 @Entity
 @NamedQueries({@NamedQuery(name = "empleadoFindAllEmpleadoYJefe",query = "SELECT p FROM Persona p WHERE p.tiposPersona = com.dulcejosefina.entity.TipoPersona.EMPLEADO OR p.tiposPersona = com.dulcejosefina.entity.TipoPersona.JEFE"),
-@NamedQuery(name="personaFindAll",query = "SELECT p FROM Persona p ORDER BY p.fechaCarga desc")})
+@NamedQuery(name="findAllJefeOnly",query = "SELECT p FROM Persona p WHERE p.tiposPersona = com.dulcejosefina.entity.TipoPersona.JEFE"),    
+@NamedQuery(name="personaFindAll",query = "SELECT p  FROM Persona p ORDER BY p.fechaCarga desc")})
 @Table(name = "PERSONA",indexes = {@Index(name = "dni_Index",columnList = "NUMERO_DOCUMENTO"),
     @Index(name = "cuil_Index",columnList = "CUIL"),
     @Index(name = "email_Index",columnList = "EMAIL"),

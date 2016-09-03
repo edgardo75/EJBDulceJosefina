@@ -29,8 +29,9 @@ public class DatosProducto {
     private double porcentajeCompra;
     private double porcentajeVenta;
     private DatosSucursal sucursal;
-    private DatosProveedor proveedor;
-    private DatosPackProducto packProducto;
+    private DatosProveedor proveedor;    
+    private DatosCompraProducto compraProducto;
+    private DatosVentaProducto ventaProducto;
     
 
     public long getId() {
@@ -55,6 +56,24 @@ public class DatosProducto {
 
     public void setPrecioUnitarioCompra(double precioUnitarioCompra) {
         this.precioUnitarioCompra = precioUnitarioCompra;
+    }
+
+    public DatosSucursal getSucursalId() {
+        return sucursal;
+    }
+
+    public DatosProveedor getProveedorId() {
+        return proveedor;
+    }
+
+    
+
+    public DatosCompraProducto getCompraProducto() {
+        return compraProducto;
+    }
+
+    public DatosVentaProducto getVentaProducto() {
+        return ventaProducto;
     }
 
     public double getPrecioUnitarioVenta() {
@@ -161,9 +180,7 @@ public class DatosProducto {
         return proveedor;
     }
 
-    public DatosPackProducto getPackProducto() {
-        return packProducto;
-    }
+    
 
     public double getPorcentajeCompra() {
         return porcentajeCompra;

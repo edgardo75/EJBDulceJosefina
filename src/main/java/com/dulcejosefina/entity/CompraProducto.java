@@ -36,8 +36,8 @@ public class CompraProducto implements Serializable {
     private Double porcentajeAplicado;
     @Column(name = "DETALLE",columnDefinition = "VARCHAR(255)DEFAULT''")
     private String detalle;
-    @Column(name = "TOTAL_COMPRA",columnDefinition = "DECIMAL(15,3) default '0.000'")
-    private BigDecimal totalCompra;
+    @Column(name = "PRECIO",columnDefinition = "DECIMAL(15,3) default '0.000'")
+    private BigDecimal precio;
     
     public CompraProducto(){}
     public Long getId() {
@@ -114,13 +114,15 @@ public class CompraProducto implements Serializable {
         this.detalle = detalle;
     }
 
-    public BigDecimal getTotalCompra() {
-        return totalCompra;
+    public BigDecimal getPrecio() {
+        return precio;
     }
 
-    public void setTotalCompra(BigDecimal totalCompra) {
-        this.totalCompra = totalCompra;
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
     }
+
+    
 
     @Override
     public boolean equals(Object object) {
@@ -137,13 +139,7 @@ public class CompraProducto implements Serializable {
         return "com.dulcejosefina.entity.Compra[ id=" + id + " ]";
     }
     public String toXML(){
-    StringBuilder xml = new StringBuilder("<itemCompra>\n")
-            .append("<id>").append(this.getId()).append("</id>\n").append("<fecha>").append(this.getFechaCompra()).append("</fecha>\n")
-                    .append("<presentacion>").append(this.getPresentacion()).append("</presentacion>\n").append("<porcentaje>").append(this.getPorcentajeAplicado()).append("</porcentaje>\n")
-                    .append("<detalle>").append(this.getDetalle()).append("</detalle>\n")
-                    .append("<totalCompra>").append(this.getTotalCompra()).append("</totalCompra>\n")
-                    .append("<packId>").append(this.getPackFK().getId()).append("</packId>\n")
-            .append("</itemCompra>");
-        return xml.toString();
+    String xml = "<itemCompra>\n<id>" + this.getId() + "</id>\n" + "<fecha>" + this.getFechaCompra() + "</fecha>\n" + "<presentacion>" + this.getPresentacion() + "</presentacion>\n" + "<porcentaje>" + this.getPorcentajeAplicado() + "</porcentaje>\n" + "<detalle>" + this.getDetalle() + "</detalle>\n" + "<precio>" + this.getPrecio()+ "</precio>\n" + "<packId>" + this.getPackFK().getId() + "</packId>\n" + "</itemCompra>";
+        return xml;
     }
 }

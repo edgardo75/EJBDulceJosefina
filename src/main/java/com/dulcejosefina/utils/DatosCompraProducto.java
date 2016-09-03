@@ -5,41 +5,17 @@
  */
 package com.dulcejosefina.utils;
 
+import java.util.List;
+
 /**
  *
  * @author Edgardo
  */
 public class DatosCompraProducto {
-    private long id;
-    private double presentacion;
-    private String fecha;
-    private double porcentajeAplicado;
-    private String detalle;
-    private double totalCompra;
-
-    public long getId() {
-        return id;
-    }
-
-    public double getPresentacion() {
-        return presentacion;
-    }
-
-    public String getFecha() {
-        return fecha;
-    }
-
-    public double getPorcentajeAplicado() {
-        return porcentajeAplicado;
-    }
-
-    public String getDetalle() {
-        return detalle;
-    }
-
-    public double getTotalCompra() {
-        return totalCompra;
-    }
-    
+  private List<DatosCompraProductoItem>listShop;
+  
+  public List<DatosCompraProductoItem>getList(){
+  return listShop;
+  }
     
 }

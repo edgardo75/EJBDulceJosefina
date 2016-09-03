@@ -30,10 +30,10 @@ public class CajaEntradaSalida implements Serializable {
     @Column(name = "SALIDA",columnDefinition = "DECIMAL(15, 3) default'0.000'")
     private BigDecimal salida;
     @Column(name = "ENTRADATARJETA", columnDefinition = "DECIMAL(15, 3) default'0.000'")
-    private double entradaTarjeta;    
+    private BigDecimal entradaTarjeta;    
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "VENTASEFECTIVO", columnDefinition = "DECIMAL(15, 3) default'0.000'")
-    private double ventasEfectivo;
+    private BigDecimal ventasEfectivo;
     @Column(name = "ID_PERSONA")    
     private Integer idPersona;
     @Basic(fetch = FetchType.LAZY)
@@ -85,19 +85,19 @@ public class CajaEntradaSalida implements Serializable {
         this.salida = salida;
     }
 
-    public double getEntradaTarjeta() {
+    public BigDecimal getEntradaTarjeta() {
         return entradaTarjeta;
     }
 
-    public void setEntradaTarjeta(double entradaTarjeta) {
+    public void setEntradaTarjeta(BigDecimal entradaTarjeta) {
         this.entradaTarjeta = entradaTarjeta;
     }
 
-    public double getVentasEfectivo() {
+    public BigDecimal getVentasEfectivo() {
         return ventasEfectivo;
     }
 
-    public void setVentasEfectivo(double ventasEfectivo) {
+    public void setVentasEfectivo(BigDecimal ventasEfectivo) {
         this.ventasEfectivo = ventasEfectivo;
     }
 

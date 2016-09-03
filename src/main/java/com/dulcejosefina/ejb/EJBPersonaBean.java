@@ -331,6 +331,21 @@ public class EJBPersonaBean {
         return result==1;
         
     }
+@WebMethod
+    public String selectAllJefes() {
+        String xml = "<Lista>";
+        ProjectHelpers passTry = new ProjectHelpers();
+        Query consulta =em.createNamedQuery("findAllJefeOnly");
+        List<Persona>lista = consulta.getResultList();
+        for (Persona persona : lista) {
+        xml+="<item>"
+                + "<id>"+persona.getId()+"</id>\n"
+                + "<login>"+persona.getLogin()+"</login>\n"
+        + "<password>"+passTry.decrypt(persona.getKeyPassword(), persona.getPassword())+"</password>"
+                + "</item>";
+    }
+        return xml+"</Lista>";
+    }
 
 
 
