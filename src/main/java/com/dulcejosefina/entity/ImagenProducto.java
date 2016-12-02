@@ -28,7 +28,7 @@ public class ImagenProducto implements Serializable {
     private String extension;
     @Column(name = "MAGNITUD")
     private String magnitud;
-    @ManyToOne(optional = false,fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Producto productoFK;
     
     
@@ -105,8 +105,8 @@ public class ImagenProducto implements Serializable {
     public String toXML(){
         StringBuilder xml = new StringBuilder("<itemImageProducto>");
     
-        return xml.append("<id>").append(this.getId()).append("</id>").append("<path>").append(this.getPathImagenEnDisco()).append("</path").append("<nombre>").append(this.getNombreImagen()).append("</nombre>")
-                .append("<extension>").append(this.getExtension()).append("</extension>").append("<magnitud>").append(this.getMagnitud()).append("</magnitud>").append("<productoId")
+        return xml.append("<id>").append(this.getId()).append("</id>").append("<path>").append(this.getPathImagenEnDisco()).append("</path>").append("<nombre>").append(this.getNombreImagen()).append("</nombre>")
+                .append("<extension>").append(this.getExtension()).append("</extension>").append("<magnitud>").append(this.getMagnitud()).append("</magnitud>").append("<productoId>")
                 .append(this.getProductoFK().getId()).append("</productoId>").append("</itemImageProducto>").toString();
     }
 }

@@ -15,9 +15,14 @@ public class DatosVentaSucursal {
     private int cantidad;
     private double porcentajeDescuento;
     private double porcentajeRecargo;
-    private double descuentoPesos;
-    private double recargoPesos;
-    private double totalVenta;
+    private double totalRecargo;
+    private double totalGeneral;
+    private double totalAPagar;
+    private double totalDescuento;
+    private long idUsuarioExpidioVenta;
+    private DatosPersona persona;
+    private DatosSucursal sucursal;
+    private DatosDetalleVentaSucursal detalleVenta;
 
     public long getId() {
         return id;
@@ -39,17 +44,37 @@ public class DatosVentaSucursal {
         return porcentajeRecargo;
     }
 
-    public double getDescuentoPesos() {
-        return descuentoPesos;
+    public double getTotalRecargo() {
+        return totalRecargo;
     }
 
-    public double getRecargoPesos() {
-        return recargoPesos;
+    public double getTotalGeneral() {
+        return totalGeneral;
     }
 
-    public double getTotalVenta() {
-        return totalVenta;
+    public double getTotalAPagar() {
+        return totalAPagar;
     }
-    
+
+    public double getTotalDescuento() {
+        return totalDescuento;
+    }
+
+    public DatosPersona getPersona() {
+        return persona;
+    }
+
+    public DatosSucursal getSucursal() {
+        return sucursal;
+    }
+
+    public DatosDetalleVentaSucursal getDetalleVenta() {
+        return detalleVenta;
+    }
+
+    public long getIdUsuarioExpidioVenta() {
+        return idUsuarioExpidioVenta;
+    }
+
     
 }

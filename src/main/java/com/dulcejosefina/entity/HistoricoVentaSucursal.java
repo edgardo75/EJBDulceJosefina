@@ -38,7 +38,7 @@ public class HistoricoVentaSucursal implements Serializable {
     private BigDecimal recargoPesos;
     @Column(name = "TOTAL_VENTA",columnDefinition = "DECIMAL(15,3) DEFAULT'0.000'")
     private BigDecimal totalVenta;
-    @ManyToOne(targetEntity = VentaSucursal.class,fetch = FetchType.LAZY,optional = true)
+    @ManyToOne(targetEntity = VentaSucursal.class,fetch = FetchType.LAZY)
     private VentaSucursal ventaSucursal;
 
     public HistoricoVentaSucursal(){}
@@ -62,7 +62,7 @@ public class HistoricoVentaSucursal implements Serializable {
         return cantidad;
     }
 
-    public void setCantida(Integer cantidad) {
+    public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
     }
 

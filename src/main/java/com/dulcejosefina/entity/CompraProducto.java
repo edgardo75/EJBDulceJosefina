@@ -2,8 +2,6 @@ package com.dulcejosefina.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
 @Entity
 public class CompraProducto implements Serializable {
 
@@ -24,21 +21,16 @@ public class CompraProducto implements Serializable {
     @Column(name = "ID_COMPRA_PRODUCTO")    
     private Long id;
     @Column(name = "PRESENTACION",columnDefinition = "INTEGER default '0'")
-    private BigDecimal presentacion;
-    @Column(name = "FECHA_COMPRA")
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date fechaCompra;
-    @ManyToOne(cascade = {CascadeType.ALL},fetch = FetchType.LAZY,targetEntity = Producto.class)
+    private Integer presentacion;
+    
+    @ManyToOne(fetch = FetchType.LAZY,targetEntity = Producto.class)
     private Producto productoFK;
-    @ManyToOne(cascade = {CascadeType.ALL},fetch = FetchType.LAZY,targetEntity = PackProducto.class)
-    private PackProducto packFK;
-    @Column(name = "PORCENTAJE_APLICADO",columnDefinition = "DECIMAL(15,2)DEFAULT'0.00'")
-    private Double porcentajeAplicado;
-    @Column(name = "DETALLE",columnDefinition = "VARCHAR(255)DEFAULT''")
-    private String detalle;
+    @ManyToOne(fetch = FetchType.LAZY,targetEntity = PackProducto.class)
+    private PackProducto packFK;    
     @Column(name = "PRECIO",columnDefinition = "DECIMAL(15,3) default '0.000'")
     private BigDecimal precio;
-    
+    @Column(name = "PORCENTAJE",columnDefinition = "DECIMAL(15,3) default '0.000'")
+    private double porcentaje;
     public CompraProducto(){}
     public Long getId() {
         return id;
@@ -48,13 +40,15 @@ public class CompraProducto implements Serializable {
         this.id = id;
     }
 
-    public BigDecimal getPresentacion() {
+    public Integer getPresentacion() {
         return presentacion;
     }
 
-    public void setPresentacion(BigDecimal presentacion) {
+    public void setPresentacion(Integer presentacion) {
         this.presentacion = presentacion;
     }
+
+   
 
     public Producto getProducto() {
         return productoFK;
@@ -64,23 +58,18 @@ public class CompraProducto implements Serializable {
         this.productoFK = producto;
     }
 
+    public double getPorcentaje() {
+        return porcentaje;
+    }
+
+    public void setPorcentaje(double porcentaje) {
+        this.porcentaje = porcentaje;
+    }
+
     
 
-    public Date getFechaCompra() {
-        return fechaCompra;
-    }
-
-    public void setFechaCompra(Date fechaCompra) {
-        this.fechaCompra = fechaCompra;
-    }
-
-    public Producto getProductoFK() {
-        return productoFK;
-    }
-
-    public void setProductoFK(Producto productoFK) {
-        this.productoFK = productoFK;
-    }
+   
+   
 
     public PackProducto getPackFK() {
         return packFK;
@@ -90,13 +79,7 @@ public class CompraProducto implements Serializable {
         this.packFK = packFK;
     }
 
-    public Double getPorcentajeAplicado() {
-        return porcentajeAplicado;
-    }
-
-    public void setPorcentajeAplicado(Double porcentajeAplicado) {
-        this.porcentajeAplicado = porcentajeAplicado;
-    }
+  
 
     
     @Override
@@ -106,14 +89,7 @@ public class CompraProducto implements Serializable {
         return hash;
     }
 
-    public String getDetalle() {
-        return detalle;
-    }
-
-    public void setDetalle(String detalle) {
-        this.detalle = detalle;
-    }
-
+  
     public BigDecimal getPrecio() {
         return precio;
     }
@@ -139,7 +115,11 @@ public class CompraProducto implements Serializable {
         return "com.dulcejosefina.entity.Compra[ id=" + id + " ]";
     }
     public String toXML(){
-    String xml = "<itemCompra>\n<id>" + this.getId() + "</id>\n" + "<fecha>" + this.getFechaCompra() + "</fecha>\n" + "<presentacion>" + this.getPresentacion() + "</presentacion>\n" + "<porcentaje>" + this.getPorcentajeAplicado() + "</porcentaje>\n" + "<detalle>" + this.getDetalle() + "</detalle>\n" + "<precio>" + this.getPrecio()+ "</precio>\n" + "<packId>" + this.getPackFK().getId() + "</packId>\n" + "</itemCompra>";
-        return xml;
+    StringBuilder xml = new StringBuilder("<itemCompra>\n");
+            xml.append("<id>").append(this.getId()).append("</id>\n").append("<presentacion>").append(this.getPresentacion())
+                    .append("</presentacion>\n" ).append("<precio>").append(this.getPrecio()).append("</precio>\n").append("<nombrePack>").append(this.getPackFK().getDescripcion())
+                    .append("</nombrePack>\n").append("<packId>").append(this.getPackFK().getId()).append("</packId>\n").append("<porcentaje>").append(this.getPorcentaje()).append("</porcentaje>\n")
+                    .append("</itemCompra>");
+        return xml.toString();
     }
 }

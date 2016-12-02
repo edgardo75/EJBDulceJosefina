@@ -1,11 +1,14 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package com.dulcejosefina.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,21 +16,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
+
+/**
+ *
+ * @author Edgardo
+ */
 @Entity
-@NamedQueries({@NamedQuery(name = "selectAllDetalleVentaListForIdVentaSucursal",query = "SELECT d FROM DetalleVentaSucursal d WHERE d.ventaSucursal.id =:id")})
-public class DetalleVentaSucursal implements Serializable {    
-   
+@NamedQueries({@NamedQuery(name = "selectAllDetallePresupuestoById",query = "SELECT p FROM DetallePresupuesto p WHERE p.presupuesto.id =:id")})
+public class DetallePresupuesto implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @TableGenerator(name = "DetalleVentaSucursalIdGen",table = "ID_GEN_DETALLE_VENTA_SUC", pkColumnName="DETSUCNAME",pkColumnValue="DetalleVentaSucursal", valueColumnName="DETSUCKEY",
+    @TableGenerator(name = "DetallePresupuestoIdGen",table = "ID_GEN_DETALLEPRESUPUESTO", pkColumnName="DETPRENAME",pkColumnValue="DetallePresupuesto", valueColumnName="DETPREKEY",
     allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.TABLE,generator = "DetalleVentaSucursalIdGen")
-    @Column(name = "ID_DETALLE_VENTA_SUCURSAL")    
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "DetallePresupuestoIdGen")
     private Long id;
+
     @Column(name = "SUBTOTAL",columnDefinition = "DECIMAL(15,3) DEFAULT'0.000'")
-    private BigDecimal subtotal;
-   
-    
+    private BigDecimal subtotal;   
     @Column(name = "IDPACK")
     private long idPack;
     @Column(name = "IDVENTAPRODUCTO")
@@ -44,12 +50,10 @@ public class DetalleVentaSucursal implements Serializable {
     private double precio;    
     @Column(name = "CANTIDAD")
     private int cantidad;
-    @ManyToOne(fetch = FetchType.LAZY,targetEntity = VentaSucursal.class)
-    private VentaSucursal ventaSucursal;
+    @ManyToOne
+    private Presupuesto presupuesto;    
     @ManyToOne
     private Producto producto;
-    public DetalleVentaSucursal(){}
-
     public Long getId() {
         return id;
     }
@@ -65,16 +69,6 @@ public class DetalleVentaSucursal implements Serializable {
     public void setSubtotal(BigDecimal subtotal) {
         this.subtotal = subtotal;
     }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-    }
-
-   
 
     public long getIdPack() {
         return idPack;
@@ -132,12 +126,20 @@ public class DetalleVentaSucursal implements Serializable {
         this.precio = precio;
     }
 
-    public VentaSucursal getVentaSucursal() {
-        return ventaSucursal;
+    public int getCantidad() {
+        return cantidad;
     }
 
-    public void setVentaSucursal(VentaSucursal ventaSucursal) {
-        this.ventaSucursal = ventaSucursal;
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public Presupuesto getPresupuesto() {
+        return presupuesto;
+    }
+
+    public void setPresupuesto(Presupuesto presupuesto) {
+        this.presupuesto = presupuesto;
     }
 
     public Producto getProducto() {
@@ -147,7 +149,7 @@ public class DetalleVentaSucursal implements Serializable {
     public void setProducto(Producto producto) {
         this.producto = producto;
     }
-   
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -158,31 +160,31 @@ public class DetalleVentaSucursal implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DetalleVentaSucursal)) {
+        if (!(object instanceof DetallePresupuesto)) {
             return false;
         }
-        DetalleVentaSucursal other = (DetalleVentaSucursal) object;
+        DetallePresupuesto other = (DetallePresupuesto) object;
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "com.dulcejosefina.entity.DetalleVentaSucursal[ id=" + id + " ]";
+        return "com.dulcejosefina.entity.DetallePresupuesto[ id=" + id + " ]";
     }
     public String toXML(){
-        StringBuilder xml = new StringBuilder("<itemDetalleVenta>");
+        StringBuilder xml = new StringBuilder("<itemPresupuesto>");
         
         xml.append("<id>").append(this.getId()).append("</id>")
-                .append("<subtotal>").append(DecimalFormat.getInstance().format(this.getSubtotal())).append("</subtotal>")
+                .append("<subtotal>").append(this.getSubtotal()).append("</subtotal>")
                 .append("<idPack>").append(this.getIdPack()).append("</idPack>")
                 .append("<IdVentaProducto>").append(this.getIdVentaProducto()).append("</IdVentaProducto>")
                 .append("<codigo>").append((!(this.getCodigo() == null)?this.getCodigo():"")).append("</codigo>")
-                .append("<presentacion>").append(this.getPresentacion()>=1000&&this.getNombrePack().equalsIgnoreCase("Precio Unitario")?Double.valueOf(this.getPresentacion())/1000+" kg":this.getPresentacion()).append("</presentacion>")
-                .append("<precio>").append(DecimalFormat.getInstance().format(this.getPrecio())).append("</precio>")
+                .append("<presentacion>").append(this.getPresentacion()).append("</presentacion>")
+                .append("<precio>").append(this.getPrecio()).append("</precio>")
                 .append("<descripcion>").append(this.getDescripcion()).append("</descripcion>")
                 .append("<nombrePack>").append(this.getNombrePack()).append("</nombrePack>")
-                .append("<cantidad>").append(this.getCantidad()>50?Double.valueOf(this.getCantidad())+" gr":this.getCantidad()).append("</cantidad>");
-    return xml.append("</itemDetalleVenta>").toString();
+                .append("<cantidad>").append(this.getCantidad()).append("</cantidad>");
+    return xml.append("</itemPresupuesto>").toString();
     
     }
 }

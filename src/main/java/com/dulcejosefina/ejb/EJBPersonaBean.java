@@ -114,6 +114,30 @@ public class EJBPersonaBean {
         return persona.getId();
     }
     @WebMethod
+    public String selectLogin(){
+        ProjectHelpers passTry = new ProjectHelpers();
+        StringBuilder xml = new StringBuilder("<Lista>\n");
+        Query consulta = em.createNamedQuery("empleadoFindAllEmpleadoYJefe");
+        List<Persona>lista = consulta.getResultList();
+        
+        
+        if(!lista.isEmpty()){
+            for (Persona persona : lista) {
+                String resultado = persona.getPassword() != null?passTry.decrypt(persona.getKeyPassword(), persona.getPassword()):"";
+                xml.append("<item>");
+                xml.append("<id>").append(persona.getId()).append("</id>");
+                xml.append("<login>").append(persona.getLogin()).append("</login>");
+                xml.append("<password>").append(resultado).append("</password>");
+                xml.append("</item>");
+            }
+        }
+        
+        
+        return xml.append("</Lista>").toString();
+    
+   
+    }
+    @WebMethod
     public String selectAllEmpleadosJefesyCliente(){
         ProjectHelpers passTry = new ProjectHelpers();
         StringBuilder xml = new StringBuilder("<Lista>\n");
@@ -143,7 +167,7 @@ public class EJBPersonaBean {
 
     private boolean validarCamposRequeridosNombreYApellido(DatosPersona datosPersona) {
     
-        System.out.println(datosPersona.getNombre()+" "+datosPersona.getApellido());
+        
         
         return (validateDataUser.validate(datosPersona.getNombre().trim(), nombreyApellidoPattern)&&validateDataUser.validate(datosPersona.getApellido().trim(), nombreyApellidoPattern));
         
@@ -347,7 +371,15 @@ public class EJBPersonaBean {
         return xml+"</Lista>";
     }
 
+@WebMethod
+public boolean chequearPasswordDelUsuario(long idUsuario,String password){
+    ProjectHelpers passTry = new ProjectHelpers();
+    Persona persona = em.find(Persona.class, idUsuario);
+    
+    return (passTry.decrypt(persona.getKeyPassword(), persona.getPassword()) == null ? password == null : passTry.decrypt(persona.getKeyPassword(), persona.getPassword()).equals(password));
 
+
+}
 
    
 

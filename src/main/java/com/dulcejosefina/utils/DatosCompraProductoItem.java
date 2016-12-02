@@ -11,39 +11,38 @@ package com.dulcejosefina.utils;
  */
 public class DatosCompraProductoItem {
       private long id;
-    private double presentacion;
-    private String fecha;
-    private double porcentajeAplicado;
-    private String detalle;
-    private double totalCompra;
+    private int presentacion;
+    private String fecha;        
+    private double precio;
+    private String porcentaje;
     private long packProductoId;
 
     public long getId() {
         return id;
     }
 
-    public double getPresentacion() {
+    public int getPresentacion() {
         return presentacion;
     }
+
+  
 
     public String getFecha() {
         return fecha;
     }
 
-    public double getPorcentajeAplicado() {
-        return porcentajeAplicado;
+    public double getPrecio() {
+        return precio;
     }
 
-    public String getDetalle() {
-        return detalle;
-    }
-
-    public double getTotalCompra() {
-        return totalCompra;
-    }
+   
 
     public long getPackProductoId() {
         return packProductoId;
+    }
+
+    public String getPorcentaje() {
+        return porcentaje;
     }
 
 }

@@ -3,7 +3,6 @@ package com.dulcejosefina.entity;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -37,9 +36,9 @@ public class Sucursal implements Serializable {
     @Column(name = "FECHA_ULTIMA_VENTA")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date fechaUltimaVenta;
-    @OneToMany(mappedBy = "sucursalFK",cascade = CascadeType.REFRESH,fetch = FetchType.LAZY,orphanRemoval = true,targetEntity = VentaSucursal.class)
+    @OneToMany(mappedBy = "sucursalFK",fetch = FetchType.LAZY,orphanRemoval = true,targetEntity = VentaSucursal.class)
     private List<VentaSucursal> ventaSucursalList;
-    @OneToMany(mappedBy = "sucursalFK",cascade = CascadeType.REFRESH,fetch = FetchType.LAZY,orphanRemoval = true,targetEntity = Producto.class)
+    @OneToMany(mappedBy = "sucursalFK",fetch = FetchType.LAZY,orphanRemoval = true,targetEntity = Producto.class)
     private List<Producto>productoList;
     
     public Sucursal(){}

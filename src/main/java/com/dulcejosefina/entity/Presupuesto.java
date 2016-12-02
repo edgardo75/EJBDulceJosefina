@@ -1,37 +1,39 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package com.dulcejosefina.entity;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
+
+/**
+ *
+ * @author Edgardo
+ */
 @Entity
-@NamedQueries({@NamedQuery(name = "findVentasDiaBySucursal",query = "SELECT v FROM VentaSucursal v WHERE  v.fechaVenta = CAST(CURRENT_DATE as DATE)"),
-                @NamedQuery(name = "findVentaDelDiaPorFecha",query = "SELECT v FROM VentaSucursal v WHERE v.fechaVenta = Cast(:fecha as DATE) order by v.id desc"),
-                @NamedQuery(name = "findAllVentas",query = "SELECT v FROM VentaSucursal v WHERE v.anulado = 0 order by v.id desc")})
-public class VentaSucursal implements Serializable {
+public class Presupuesto implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @TableGenerator(name = "VentaSucursalIdGen",table = "ID_GEN_VTASUC", pkColumnName="VTASUCNAME",pkColumnValue="VentaSucursal", valueColumnName="VTASUCKEY",
+    @Id
+     @TableGenerator(name = "PresupuestoIdGen",table = "ID_GEN_PRESUPUESTO", pkColumnName="PRENAME",pkColumnValue="Presupuesto", valueColumnName="PREKEY",
     allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.TABLE,generator = "VentaSucursalIdGen")
-    @Id    
-    @Column(name = "ID_VENTA_SUCURSAL")    
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "PresupuestoIdGen")
     private Long id;
-    @Column(name="FECHA_VENTA")
+    
+     @Column(name="FECHA_VENTA")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date fechaVenta;
     @Column(name = "CANTIDAD",precision = 15,scale = 2,columnDefinition = "INTEGER default '0'")
@@ -57,22 +59,10 @@ public class VentaSucursal implements Serializable {
     @Column(name="NOMBRE_PERSONA_CLIENTE",length = 50)
     private String nombre;
     @Column(name="APELLIDO_PERSONA_CLIENTE",length = 50)
-    private String apellido;    
-    @Column(name="ANULADO")
-    private int anulado;
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "ventaSucursal",orphanRemoval = true,targetEntity = DetalleVentaSucursal.class)
-    private List<DetalleVentaSucursal>listaDetalleVentaSucursal;
-    
-    @ManyToOne 
-    Persona persona;
-    @OneToOne()
-    private CajaEntradaSalida cajaFK;
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "ventaSucursal",orphanRemoval = true,targetEntity = HistoricoVentaSucursal.class)
-    private List<HistoricoVentaSucursal>historicoVentaSucursal;
-    @ManyToOne
-    private Sucursal sucursalFK;
+    private String apellido;   
+    @OneToMany(orphanRemoval = true, mappedBy = "presupuesto")
+    private List<DetallePresupuesto> detallepresupuestosList;
 
-    public VentaSucursal(){}
     public Long getId() {
         return id;
     }
@@ -93,15 +83,9 @@ public class VentaSucursal implements Serializable {
         return cantidad;
     }
 
-    public int getAnulado() {
-        return anulado;
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
     }
-
-    public void setAnulado(int anulado) {
-        this.anulado = anulado;
-    }
-
-    
 
     public BigDecimal getPorcentajeDescuento() {
         return porcentajeDescuento;
@@ -135,57 +119,6 @@ public class VentaSucursal implements Serializable {
         this.recargoPesos = recargoPesos;
     }
 
-   
-
-    public List<DetalleVentaSucursal> getListaDetalleVentaSucursal() {
-        return listaDetalleVentaSucursal;
-    }
-
-    public void setListaDetalleVentaSucursal(List<DetalleVentaSucursal> listaDetalleVentaSucursal) {
-        this.listaDetalleVentaSucursal = listaDetalleVentaSucursal;
-    }
-
-   
-    public Persona getPersona() {
-        return persona;
-    }
-
-    public void setPersona(Persona persona) {
-        this.persona = persona;
-    }
-
-    public CajaEntradaSalida getCaja() {
-        return cajaFK;
-    }
-
-    public void setCaja(CajaEntradaSalida cajaFK) {
-        this.cajaFK = cajaFK;
-    }
-
-    public CajaEntradaSalida getCajaFK() {
-        return cajaFK;
-    }
-
-    public void setCajaFK(CajaEntradaSalida cajaFK) {
-        this.cajaFK = cajaFK;
-    }
-
-    public List<HistoricoVentaSucursal> getHistoricoVentaSucursal() {
-        return historicoVentaSucursal;
-    }
-
-    public void setHistoricoVentaSucursal(List<HistoricoVentaSucursal> historicoVentaSucursal) {
-        this.historicoVentaSucursal = historicoVentaSucursal;
-    }
-
-    public Sucursal getSucursalFK() {
-        return sucursalFK;
-    }
-
-    public void setSucursalFK(Sucursal sucursalFK) {
-        this.sucursalFK = sucursalFK;
-    }
-
     public BigDecimal getTotalRecargo() {
         return totalRecargo;
     }
@@ -193,7 +126,6 @@ public class VentaSucursal implements Serializable {
     public void setTotalRecargo(BigDecimal totalRecargo) {
         this.totalRecargo = totalRecargo;
     }
-
 
     public BigDecimal getTotalGeneral() {
         return totalGeneral;
@@ -227,29 +159,30 @@ public class VentaSucursal implements Serializable {
         this.idUsuarioExpidioVenta = idUsuarioExpidioVenta;
     }
 
-   
-
     public String getNombre() {
         return nombre;
-    }
-
-    public String getApellido() {
-        return apellido;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
+    public String getApellido() {
+        return apellido;
+    }
+
     public void setApellido(String apellido) {
         this.apellido = apellido;
     }
 
-    
+    public List<DetallePresupuesto> getDetallepresupuestosList() {
+        return detallepresupuestosList;
+    }
+
+    public void setDetallepresupuestosList(List<DetallePresupuesto> detallepresupuestosList) {
+        this.detallepresupuestosList = detallepresupuestosList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -260,19 +193,18 @@ public class VentaSucursal implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof VentaSucursal)) {
+        if (!(object instanceof Presupuesto)) {
             return false;
         }
-        VentaSucursal other = (VentaSucursal) object;
+        Presupuesto other = (Presupuesto) object;
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "com.dulcejosefina.entity.VentaSucursal[ id=" + id + " ]";
+        return "com.dulcejosefina.entity.Presupuesto[ id=" + id + " ]";
     }
-    
-    public String toXML(){
+     public String toXML(){
     StringBuilder xml = new StringBuilder(5);
     
     
@@ -283,27 +215,25 @@ public class VentaSucursal implements Serializable {
                             .append("<porcentajeRecargo>").append(this.getPorcentajeRecargo()).append("</porcentajeRecargo>")
                             .append("<descuentoPesos>").append(this.getDescuentoPesos()).append("</descuentoPesos>")
                             .append("<recargoPesos>").append(this.getRecargoPesos()).append("</recargoPesos>")
-                            .append("<totalGeneral>").append(DecimalFormat.getInstance().format(this.getTotalGeneral())).append("</totalGeneral>")
-                            .append("<totalAPagar>").append(DecimalFormat.getInstance().format(this.getTotalAPagar())).append("</totalAPagar>")
+                            .append("<totalGeneral>").append(this.getTotalGeneral()).append("</totalGeneral>")
+                            .append("<totalAPagar>").append(this.getTotalAPagar()).append("</totalAPagar>")
                             .append("<nombre>").append(this.getNombre()).append("</nombre>")
-                            .append("<apellido>").append(this.getApellido()).append("</apellido>")           
-                            .append("<anulado>").append(this.getAnulado()).append("</anulado>")
-                            .append("<sucursal>").append(this.getSucursalFK().getNombre()).append("</sucursal>");                            
+                            .append("<apellido>").append(this.getApellido()).append("</apellido>")                            ;
+                            
 
-                    if(!this.getListaDetalleVentaSucursal().isEmpty()){
-                        xml.append("<detalleVenta>");
+                    if(!this.getDetallepresupuestosList().isEmpty()){
+                        xml.append("<detallePresupuesto>");
                         StringBuilder xmlDetalle = new StringBuilder(5);
-                            for (DetalleVentaSucursal detalle : listaDetalleVentaSucursal) {
+                            for (DetallePresupuesto detalle : detallepresupuestosList) {
                                 xmlDetalle.append(detalle.toXML());
                             }
         
         
-        xml.append(xmlDetalle).append("</detalleVenta>");
+        xml.append(xmlDetalle).append("</detallePresupuesto>");
     
     
     }
             
         return xml.toString();
     }
-    
 }

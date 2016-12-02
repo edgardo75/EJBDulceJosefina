@@ -2,8 +2,6 @@ package com.dulcejosefina.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
 
 @Entity
 public class VentaProducto implements Serializable {
@@ -26,18 +23,15 @@ public class VentaProducto implements Serializable {
     private Long id;
     @Column(name = "PRESENTACION",columnDefinition = "INTEGER default '0'")
     private Integer presentacion;
-    @Column(name = "FECHA_VENTA")
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date fechaVenta;    
-    @Column(name = "DETALLE",columnDefinition = "VARCHAR(255) default''")
-    private String detalle;
-    @Column(name = "PORCENTAJE_APLICADO",columnDefinition = "DECIMAL(15,2) default '0.00'")
-    private Double porcentajeAplicado;
-    @Column(name = "TOTAL_VENTA",columnDefinition = "DECIMAL(15,3) default '0.000'")
-    private BigDecimal totalVenta;
-    @ManyToOne(cascade = {CascadeType.ALL},fetch = FetchType.LAZY,targetEntity = PackProducto.class)
+       
+    @Column(name = "PRECIO",columnDefinition = "DECIMAL(15,3) default '0.000'")
+    private BigDecimal precio;
+    @Column(name = "PORCENTAJE",columnDefinition = "DECIMAL(15,3) default '0.000'")
+    private double porcentaje;
+    
+    @ManyToOne(fetch = FetchType.LAZY,targetEntity = PackProducto.class)
     private PackProducto packFK;
-    @ManyToOne(cascade = { CascadeType.ALL},fetch = FetchType.LAZY,targetEntity = Producto.class)
+    @ManyToOne(fetch = FetchType.LAZY,targetEntity = Producto.class)
     private Producto productoFK;
 
     public Long getId() {
@@ -68,44 +62,34 @@ public class VentaProducto implements Serializable {
         return productoFK;
     }
 
+   
     public void setProductoFK(Producto productoFK) {
         this.productoFK = productoFK;
     }
 
-    public Date getFechaVenta() {
-        return fechaVenta;
+    public double getPorcentaje() {
+        return porcentaje;
     }
 
-    public void setFechaVenta(Date fechaVenta) {
-        this.fechaVenta = fechaVenta;
+    public void setPorcentaje(double porcentaje) {
+        this.porcentaje = porcentaje;
+    }
+
+ 
+
+   
+
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
     }
 
    
 
-    public String getDetalle() {
-        return detalle;
-    }
-
-    public void setDetalle(String detalle) {
-        this.detalle = detalle;
-    }
-
-    public BigDecimal getTotalVenta() {
-        return totalVenta;
-    }
-
-    public void setTotalVenta(BigDecimal totalVenta) {
-        this.totalVenta = totalVenta;
-    }
-
-    public Double getPorcentajeAplicado() {
-        return porcentajeAplicado;
-    }
-
-    public void setPorcentajeAplicado(Double porcentajeAplicado) {
-        this.porcentajeAplicado = porcentajeAplicado;
-    }
-    
     
 
     @Override
@@ -131,8 +115,16 @@ public class VentaProducto implements Serializable {
     }
     
       public String toXML(){
-    String xml = "<itemVenta>\n<id>" + this.getId() + "</id>\n" + "<fecha>" + this.getFechaVenta() + "</fecha>\n" + "<presentacion>" + this.getPresentacion() + "</presentacion>\n" + "<porcentaje>" + this.getPorcentajeAplicado() + "</porcentaje>\n" + "<detalle>" + this.getDetalle() + "</detalle>\n" + "<totalVenta>" + this.getTotalVenta() + "</totalVenta>\n" + "<packId>" + this.getPackFK().getId() + "</packId>\n" + "</itemVenta>";
-        return xml;
+    StringBuilder xml = new StringBuilder("<itemVenta>\n");
+            xml.append("<id>").append(this.getId()).append("</id>\n")
+                    .append("<presentacion>").append(this.getPresentacion()).append("</presentacion>")                   
+                    .append("<precio>").append(this.getPrecio()).append("</precio>\n")
+                    .append("<nombrePack>").append(this.getPackFK().getDescripcion()).append("</nombrePack>\n")
+                    .append("<packId>").append(this.getPackFK().getId()).append("</packId>\n")
+                    .append("<porcentaje>").append(this.getPorcentaje()).append("</porcentaje>\n")
+                    .append("</itemVenta>");
+        return xml.toString();
+        
     }
     
 }

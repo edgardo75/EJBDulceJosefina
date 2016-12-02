@@ -6,7 +6,6 @@
 package com.dulcejosefina.ejb;
 
 import com.dulcejosefina.entity.Persona;
-import com.dulcejosefina.entity.PersonaTelefono;
 import com.dulcejosefina.entity.Telefono;
 import com.dulcejosefina.utils.DatosPersona;
 import com.dulcejosefina.utils.TelefonoItem;
@@ -36,7 +35,7 @@ public class EJBTelefonoBean {
         Telefono item = null;
         
         for(TelefonoItem telefono:lista){
-            System.out.print(datosPersona.getDni()+" "+telefono.getNumero()+" "+telefono.getPrefijo().trim());
+            
             Query consulta = em.createQuery("SELECT t FROM Telefono t WHERE t.numero=:numero AND t.prefijo=:prefijo");
             consulta.setParameter("numero", Long.valueOf(telefono.getNumero().trim()));
             consulta.setParameter("prefijo", Long.valueOf(telefono.getPrefijo().trim()));

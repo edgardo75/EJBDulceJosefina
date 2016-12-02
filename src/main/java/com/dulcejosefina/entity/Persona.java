@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -83,11 +82,11 @@ public class Persona implements Serializable {
     private Date fechaUltimaCompraCliente;
     @OneToOne(orphanRemoval = true,fetch = FetchType.LAZY,mappedBy = "perfilPersona")
     private PerfilUsuario perfil;
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "personaFK")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "personaFK")
     private List<Producto> producto;
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "persona")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "persona")
     private List<VentaSucursal> ventaSucursal;
-    @OneToMany(orphanRemoval = true,cascade = CascadeType.REMOVE,fetch = FetchType.LAZY,mappedBy = "persona")
+    @OneToMany(orphanRemoval = true,fetch = FetchType.LAZY,mappedBy = "persona")
     private List<PersonaTelefono>listaPersonaTelefono;
     
     public Persona(){}

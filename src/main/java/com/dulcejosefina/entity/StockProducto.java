@@ -2,18 +2,21 @@ package com.dulcejosefina.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 
 @Entity
+@NamedQueries({@NamedQuery(name = "findAllStockForIdProduct",query = "SELECT s FROM StockProducto s WHERE s.productoFK.id =:id")})
 public class StockProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -32,8 +35,18 @@ public class StockProducto implements Serializable {
     @Column(name = "FECHA_AGREGADO_PRODUCTO")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date fechaAgregadoProducto;
+    @Column(name = "PORCENTAJE_COMPRA",columnDefinition = "DECIMAL(12,2)DEFAULT'0'")
+    private double porcentajeCompra;
+    @Column(name = "PORCENTAJE_VENTA",columnDefinition = "DECIMAL(12,2)DEFAULT'0'")
+    private double porcentajeVenta;
+    @Column(name = "DETALLE")
+    private String detalle;
+    @Column(name = "CANTIDAD_INICIAL")
+    private int cantidadInicial;
+    @Column(name = "CANTIDAD_ACTUAL")
+    private int cantidadActual;
     
-    @ManyToOne(targetEntity = Producto.class,cascade = CascadeType.REFRESH,optional = true)
+    @ManyToOne(targetEntity = Producto.class)
     private Producto productoFK;
     
     public StockProducto(){}
@@ -92,6 +105,48 @@ public class StockProducto implements Serializable {
         this.productoFK = productoFK;
     }
 
+    public double getPorcentajeCompra() {
+        return porcentajeCompra;
+    }
+
+    public void setPorcentajeCompra(double porcentajeCompra) {
+        this.porcentajeCompra = porcentajeCompra;
+    }
+
+    public double getPorcentajeVenta() {
+        return porcentajeVenta;
+    }
+
+    public void setPorcentajeVenta(double porcentajeVenta) {
+        this.porcentajeVenta = porcentajeVenta;
+    }
+
+    public String getDetalle() {
+        return detalle;
+    }
+
+    public void setDetalle(String detalle) {
+        this.detalle = detalle;
+    }
+
+    public int getCantidadInicial() {
+        return cantidadInicial;
+    }
+
+    public void setCantidadInicial(int cantidadInicial) {
+        this.cantidadInicial = cantidadInicial;
+    }
+
+    public int getCantidadActual() {
+        return cantidadActual;
+    }
+
+    public void setCantidadActual(int cantidadActual) {
+        this.cantidadActual = cantidadActual;
+    }
+
+   
+
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
@@ -107,12 +162,18 @@ public class StockProducto implements Serializable {
         return "com.dulcejosefina.entity.StockProducto[ id=" + id + " ]";
     }
       public String toXML(){
-    StringBuilder xml = new StringBuilder("<itemStock>\n")
-            .append("<id>").append(this.getId()).append("</id>\n").append("<preciounitarioCompra>").append(this.getPrecioUnitarioCompra()).append("</preciounitarioCompra>\n")
-                    .append("<precioUnitarioVenta>").append(this.getPrecioUnitarioVenta()).append("</precioUnitarioVenta>\n")
-                    .append("<cantidadAgregada>").append(this.getCantidadAgregada()).append("</cantidadAgregada>\n")
-                    .append("<fechaAgregado>").append(this.getFechaAgregadoProducto()).append("</fechaAgregado>\n")                    
-            .append("</itemStock>");
-        return xml.toString();
+    String xml = "<itemStock>\n<id>" + this.getId() + "</id>\n" + 
+            "<preciounitarioCompra>" + this.getPrecioUnitarioCompra() + "</preciounitarioCompra>\n" + 
+            "<precioUnitarioVenta>" + this.getPrecioUnitarioVenta() + "</precioUnitarioVenta>\n" + 
+            "<porcentajeCompra>" + this.getPorcentajeCompra()+ "</porcentajeCompra>\n" + 
+            "<porcentajeVenta>" + this.getPorcentajeVenta()+ "</porcentajeVenta>\n" + 
+            "<detalle>" + this.getDetalle()+ "</detalle>\n" + 
+            "<cantidadInicial>" + this.getCantidadInicial()+ "</cantidadInicial>\n" + 
+            "<cantidadTotalActual>" + this.getCantidadActual()+ "</cantidadTotalActual>\n" + 
+            "<cantidadAgregada>" + this.getCantidadAgregada() + "</cantidadAgregada>\n" + 
+            "<fechaAgregado>" + new SimpleDateFormat("dd/MM/yyyy").format(this.getFechaAgregadoProducto()) + "</fechaAgregado>\n" + 
+            
+            "</itemStock>";
+        return xml;
     }
 }

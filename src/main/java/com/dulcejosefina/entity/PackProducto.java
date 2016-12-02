@@ -2,7 +2,7 @@ package com.dulcejosefina.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.CascadeType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,7 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
 
 @Entity
-@NamedQueries({@NamedQuery(name = "PackProducto.fidAll",query = "SELECT p FROM PackProducto p")})
+@NamedQueries({@NamedQuery(name = "PackProducto.fidAll",query = "SELECT p FROM PackProducto p order by p.id")})
 public class PackProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -27,9 +27,11 @@ public class PackProducto implements Serializable {
     private Long id;
     @Column(name = "DESCRIPCION", unique = true,nullable = false)
     private String descripcion;
-    @OneToMany(cascade = {CascadeType.REFRESH},mappedBy = "packFK",orphanRemoval = true,fetch = FetchType.LAZY)
+    @Column(name = "DESCRIPCION_PORCENTAJE")
+    private String porcentajeDescripcion;
+    @OneToMany(mappedBy = "packFK",orphanRemoval = true,fetch = FetchType.LAZY)
     private List<CompraProducto> compra;
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "packFK",orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "packFK",orphanRemoval = true,fetch = FetchType.LAZY)
     private List<VentaProducto> venta;
     public PackProducto(){}
 
@@ -65,6 +67,14 @@ public class PackProducto implements Serializable {
         this.venta = venta;
     }
 
+    public String getPorcentajedescripcion() {
+        return porcentajeDescripcion;
+    }
+
+    public void setPorcentajedescripcion(String porcentaje) {
+        this.porcentajeDescripcion = porcentaje;
+    }
+
    
 
     @Override
@@ -91,6 +101,7 @@ public class PackProducto implements Serializable {
     public String toXML(){
         StringBuilder xml = new StringBuilder("<item>\n");
                 xml.append("<id>").append(this.getId()).append("</id>").append("<descripcion>").append(this.getDescripcion()).append("</descripcion>")
+                        .append("<porcentajeDescripcion>").append(this.getPorcentajedescripcion()).append("</porcentajeDescripcion>")
                  .append("</item>");
     
         return xml.toString();

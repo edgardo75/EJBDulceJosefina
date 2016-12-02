@@ -15,7 +15,7 @@ import javax.persistence.TableGenerator;
 public class PerfilUsuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @TableGenerator(name = "PerfilUsuarioIdGen",table = "ID_GEN_Perfil_User", pkColumnName="PERFNAME",pkColumnValue="PerfilUsuario", valueColumnName="PERFKEY",
+    @TableGenerator(name = "PerfilUsuarioIdGen",table = "ID_GEN_PERFIL_USER", pkColumnName="PERFNAME",pkColumnValue="PerfilUsuario", valueColumnName="PERFKEY",
     allocationSize=1)
     @GeneratedValue(strategy = GenerationType.TABLE,generator = "PerfilUsuarioIdGen")
     @Id
@@ -25,7 +25,7 @@ public class PerfilUsuario implements Serializable {
     private String codigoPerfil;
     @Column(name = "NOMBRE_PERFIL",columnDefinition = "varchar(45)")
     private String nombrePerfil;
-    @OneToOne(optional = false)
+    @OneToOne()
     private Persona perfilPersona;
     @OneToMany(mappedBy = "perfilModulo",targetEntity = ModuloUsuario.class)
     private List<ModuloUsuario> modulo;

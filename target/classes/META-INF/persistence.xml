@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="DulceJoseFinaPU" transaction-type="JTA">
-    <jta-data-source>jdbc/testFirebird</jta-data-source>
+    <jta-data-source>jdbc/_dulceJosefina</jta-data-source>
     <class>com.dulcejosefina.entity.CajaEntradaSalida</class>
     <class>com.dulcejosefina.entity.CompraProducto</class>
     <class>com.dulcejosefina.entity.DetalleVentaSucursal</class>
@@ -19,6 +19,10 @@
     <class>com.dulcejosefina.entity.Tarjeta</class>
     <class>com.dulcejosefina.entity.VentaProducto</class>
     <class>com.dulcejosefina.entity.VentaSucursal</class>
+    <class>com.dulcejosefina.entity.PersonaTelefono</class>
+    <class>com.dulcejosefina.entity.Telefono</class>
+    <class>com.dulcejosefina.entity.DetallePresupuesto</class>
+    <class>com.dulcejosefina.entity.Presupuesto</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
     </properties>

@@ -14,7 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
 
 @Entity
-@NamedQueries({@NamedQuery(name = "findAll.Proveedor", query = "SELECT p FROM Proveedor p")})
+@NamedQueries({@NamedQuery(name = "findAll.Proveedor", query = "SELECT p FROM Proveedor p"),@NamedQuery(name = "findProveedorByNombre",query = "SELECT p FROM Proveedor p WHERE LOWER(p.nombre) LIKE :nombre")})
 public class Proveedor implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -24,13 +24,30 @@ private EntityManager em;
      * @return 
      */
     @WebMethod(operationName = "crearProveedor")
-    public short crearProveedor(@WebParam(name = "nombreProveedor") String nombreProveedor, @WebParam(name = "detalles") String detalles) {
+    public int crearProveedor(@WebParam(name = "nombreProveedor") String nombreProveedor, @WebParam(name = "detalles") String detalles) {
+        int retorno =0;
+        
         Proveedor proveedor = new Proveedor();
-        proveedor.setNombre(nombreProveedor.toUpperCase());  
-        proveedor.setDetalles(detalles);
-        em.persist(proveedor);
+        Query consulta = em.createQuery("SELECT p FROM Proveedor p WHERE p.nombre =:proveedor");
+        consulta.setParameter("proveedor".toLowerCase().trim(), nombreProveedor.toLowerCase().trim());
+        
+        if(consulta.getResultList().isEmpty()){
+            proveedor.setNombre(nombreProveedor.toUpperCase().trim());              
+            proveedor.setDetalles(detalles);
+              em.persist(proveedor);
+              retorno = proveedor.getId().shortValue();
         em.flush();
-        return proveedor.getId().shortValue();
+        }else{
+            List<Proveedor>lista = consulta.getResultList();
+            for (Proveedor proveedor1 : lista) {
+                retorno=proveedor1.getId().intValue();
+            }
+            
+        }
+        
+      
+        
+        return retorno;
     }
 
     @WebMethod

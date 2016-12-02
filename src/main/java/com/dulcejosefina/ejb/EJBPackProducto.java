@@ -24,9 +24,10 @@ import javax.persistence.Query;
 public class EJBPackProducto {
 @PersistenceContext
 private EntityManager em;
-    public short crearPack(String nombrePack) {
+    public short crearPack(String nombrePack,String porcentajeDenominacion) {
         PackProducto pack = new PackProducto();
         pack.setDescripcion(nombrePack);
+        pack.setPorcentajedescripcion(porcentajeDenominacion);
         em.persist(pack);
         return pack.getId().shortValue();
     }

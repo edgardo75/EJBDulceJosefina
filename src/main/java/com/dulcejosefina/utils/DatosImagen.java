@@ -9,33 +9,11 @@ package com.dulcejosefina.utils;
  *
  * @author Edgardo
  */
-public class DatosImagenProducto {
-    private long id;
+public class DatosImagen {
     private long idProducto;
     private byte[] longitudImagen;
     private String nameImagen;
     private String magnitud;
-    private String path;    
-    private String extension;
-    
-
-    public long getId() {
-        return id;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    
-
-    public String getExtension() {
-        return extension;
-    }
-
-    public String getMagnitud() {
-        return magnitud;
-    }
 
     public long getIdProducto() {
         return idProducto;
@@ -48,6 +26,12 @@ public class DatosImagenProducto {
     public String getNameImagen() {
         return nameImagen;
     }
+
+    public String getMagnitud() {
+        return magnitud;
+    }
+    
+    
     
     
 }

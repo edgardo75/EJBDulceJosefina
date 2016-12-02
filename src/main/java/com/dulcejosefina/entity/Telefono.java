@@ -25,8 +25,8 @@ public class Telefono implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @TableGenerator(name = "telefonoIDGen",table = "id_gen_Tel",pkColumnName = "pkTelefono",pkColumnValue = "Telefono",valueColumnName = "TELKEY",allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE,generator = "telefonoIDGen")
+    @TableGenerator(name = "TelefonoIDGen",table = "ID_GEN_TEL",pkColumnName = "PkTelefono",pkColumnValue = "Telefono",valueColumnName = "TELKEY",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "TelefonoIDGen")
     private Long id;
     @Column(name = "NUMERO",unique = true)
     private long numero;

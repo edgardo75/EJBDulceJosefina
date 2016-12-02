@@ -32,7 +32,8 @@ public class DatosProducto {
     private DatosProveedor proveedor;    
     private DatosCompraProducto compraProducto;
     private DatosVentaProducto ventaProducto;
-    
+    private DatosPersona persona;
+    private int fraccionado;
 
     public long getId() {
         return id;
@@ -58,13 +59,17 @@ public class DatosProducto {
         this.precioUnitarioCompra = precioUnitarioCompra;
     }
 
-    public DatosSucursal getSucursalId() {
-        return sucursal;
+    public int getFraccionado() {
+        return fraccionado;
     }
 
-    public DatosProveedor getProveedorId() {
-        return proveedor;
+    public void setFraccionado(int fraccionado) {
+        this.fraccionado = fraccionado;
     }
+
+   
+
+    
 
     
 
@@ -188,6 +193,10 @@ public class DatosProducto {
 
     public double getPorcentajeVenta() {
         return porcentajeVenta;
+    }
+
+    public DatosPersona getPersona() {
+        return persona;
     }
     
     

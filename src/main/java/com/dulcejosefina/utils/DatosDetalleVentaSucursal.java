@@ -5,37 +5,21 @@
  */
 package com.dulcejosefina.utils;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  *
  * @author Edgardo
  */
 public class DatosDetalleVentaSucursal {
     
-    private long id;
-    private double subtotal;
-    private double descuento;
-    private double recargo;
-    private double idProducto;
+    List<ItemDetalleVentaSucursalItem>list;
 
-    public long getId() {
-        return id;
+    public List<ItemDetalleVentaSucursalItem> getList() {
+        return Collections.unmodifiableList(list);
     }
-
-    public double getSubtotal() {
-        return subtotal;
-    }
-
-    public double getDescuento() {
-        return descuento;
-    }
-
-    public double getRecargo() {
-        return recargo;
-    }
-
-    public double getIdProducto() {
-        return idProducto;
-    }
+   
     
     
 }
