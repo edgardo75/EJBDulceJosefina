@@ -144,7 +144,7 @@ private long codigoProveedor = 0;
         Query consulta = em.createQuery("SELECT p from Producto p WHERE p.proveedorFK.id =:idProveedor");
         consulta.setParameter("idProveedor", idProveedor);
         List<Producto>listado = consulta.getResultList();
-        System.out.println("tamaño del listado "+listado.size());
+        
         if(!listado.isEmpty()){
                 
             for (Producto producto : listado) {
@@ -184,7 +184,7 @@ private long codigoProveedor = 0;
         BigDecimal resultado =null;
         BigDecimal percent = new BigDecimal(porcentaje);
         
-                System.out.println("TAMAÑO DE LA LISTA DE COMPRA "+lista.size());
+                
         for (CompraProducto compraProducto : lista) {
            switch(percent.signum()){
                case 1:{
@@ -222,7 +222,7 @@ private long codigoProveedor = 0;
 //            
 //            }
             
-            System.out.println(compraProducto.getPrecio().doubleValue()+" "+compraProducto.getPackFK().getDescripcion());
+         
             
             compraProducto.setProducto(producto);
             
