@@ -1,7 +1,7 @@
 package com.dulcejosefina.entity;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -313,10 +313,10 @@ public class Persona implements Serializable {
     }
     public String toXML(){        
     StringBuilder xml = new StringBuilder(5);    
-    String fechaUltimaCompra = !(this.getFechaUltimaCompraCliente()==null)?SimpleDateFormat.getDateTimeInstance().format(this.getFechaUltimaCompraCliente()):"";
+    String fechaUltimaCompra = !(this.getFechaUltimaCompraCliente()==null)?DateFormat.getDateTimeInstance().format(this.getFechaUltimaCompraCliente()):"";
     xml.append("<id>").append(this.getId()).append("</id>").append("<nombre>").append(this.getNombre()).append("</nombre>").append("<apellido>").append(this.getApellido()).append("</apellido>").append("<numeroDocumento>").append(this.getDni())
        .append("</numeroDocumento>").append("<cuil>").append(this.getCuil()).append("</cuil>").append("<email>").append(this.getEmail()).append("</email>").append("<login>").append(this.getLogin()).append("</login>")
-            .append("<fechaCarga>").append(SimpleDateFormat.getDateTimeInstance().format(this.getFechaCarga())).append("</fechaCarga>").append("<detalle>").append(this.getDetalles()).append("</detalle>").append("<genero>").append(this.getGenero().toString()).append("</genero>")
+            .append("<fechaCarga>").append(DateFormat.getDateTimeInstance().format(this.getFechaCarga())).append("</fechaCarga>").append("<detalle>").append(this.getDetalles()).append("</detalle>").append("<genero>").append(this.getGenero().toString()).append("</genero>")
             .append("<tipoDocu>").append(this.getTipoDocumento().toString()).append("</tipoDocu>").append("<tipoPersona>").append(this.getTiposPersona().toString()).append("</tipoPersona>")
             .append("<estado>").append(this.getEstado()).append("</estado>").append("<clientePreferencial>").append(this.getPerefencial()).append("</clientePreferencial>")
             .append("<puntosClientePreferencial>").append(this.getPuntosClientePrefencial()).append("</puntosClientePreferencial>")

@@ -26,16 +26,16 @@ public class EJBHistoricoVentaSucursal {
 private EntityManager em;
 
     public void insertarHistoricoVentaSucursal(VentaSucursal venta,DatosVentaSucursal datos) {
-        HistoricoVentaSucursal historico = new HistoricoVentaSucursal();
-        historico.setCantidad(venta.getCantidad());
-        historico.setDescuentoPesos(venta.getDescuentoPesos());
-        historico.setFechaVenta(Calendar.getInstance().getTime());
-        historico.setPorcentajeDescuento(venta.getPorcentajeDescuento());
-        historico.setPorcentajeRecargo(venta.getPorcentajeRecargo());
-        historico.setRecargoPesos(venta.getRecargoPesos());
-        historico.setTotalVenta(venta.getTotalAPagar());
-        historico.setVentaSucursal(venta);
-        em.persist(historico);
+        HistoricoVentaSucursal historicoVentaSucursal = new HistoricoVentaSucursal();
+        historicoVentaSucursal.setCantidad(venta.getCantidad());
+        historicoVentaSucursal.setDescuentoPesos(venta.getDescuentoPesos());
+        historicoVentaSucursal.setFechaVenta(Calendar.getInstance().getTime());
+        historicoVentaSucursal.setPorcentajeDescuento(venta.getPorcentajeDescuento());
+        historicoVentaSucursal.setPorcentajeRecargo(venta.getPorcentajeRecargo());
+        historicoVentaSucursal.setRecargoPesos(venta.getRecargoPesos());
+        historicoVentaSucursal.setTotalVenta(venta.getTotalAPagar());
+        historicoVentaSucursal.setVentaSucursal(venta);
+        em.persist(historicoVentaSucursal);
         
         Query consulta =em.createQuery("SELECT h FROM HistoricoVentaSucursal h WHERE h.ventaSucursal.id =:id");
         consulta.setParameter("id", venta.getId());

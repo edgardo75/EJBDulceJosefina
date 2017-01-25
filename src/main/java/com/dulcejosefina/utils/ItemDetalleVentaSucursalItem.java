@@ -10,11 +10,7 @@ package com.dulcejosefina.utils;
  * @author Edgardo
  */
 public class ItemDetalleVentaSucursalItem {
-    
-												
-    
     private long id;
-    
     private long idPack;
     private long idVentaProducto;
     private String codigo;
@@ -25,11 +21,12 @@ public class ItemDetalleVentaSucursalItem {
     private double subtotal;
     private int cantidad;
 
+    public ItemDetalleVentaSucursalItem() {
+    }
+
     public long getId() {
         return id;
     }
-
-   
 
     public long getIdPack() {
         return idPack;

@@ -175,6 +175,7 @@ public class DetalleVentaSucursal implements Serializable {
         xml.append("<id>").append(this.getId()).append("</id>")
                 .append("<subtotal>").append(DecimalFormat.getInstance().format(this.getSubtotal())).append("</subtotal>")
                 .append("<idPack>").append(this.getIdPack()).append("</idPack>")
+                .append("<idProducto>").append(this.getProducto().getId()).append("</idProducto>")
                 .append("<IdVentaProducto>").append(this.getIdVentaProducto()).append("</IdVentaProducto>")
                 .append("<codigo>").append((!(this.getCodigo() == null)?this.getCodigo():"")).append("</codigo>")
                 .append("<presentacion>").append(this.getPresentacion()>=1000&&this.getNombrePack().equalsIgnoreCase("Precio Unitario")?Double.valueOf(this.getPresentacion())/1000+" kg":this.getPresentacion()).append("</presentacion>")

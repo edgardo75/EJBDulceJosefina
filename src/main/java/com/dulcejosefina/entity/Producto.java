@@ -20,13 +20,13 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 @Entity
-@NamedQueries({@NamedQuery(name = "Producto.findAll",query = "SELECT p FROM Producto p order by p.id ASC"),
+@NamedQueries({@NamedQuery(name = "Producto.findAllBySucursal",query = "SELECT p FROM Producto p WHERE p.sucursalFK.id =:id order by p.id ASC"),
     @NamedQuery(name = "proveedorFindAll",query = "SELECT p FROM Producto p WHERE p.proveedorFK.id =:id"),
     @NamedQuery(name = "findProductById",query = "SELECT p FROM Producto p WHERE p.id =:id"),
     @NamedQuery(name="findProductoByDescripcionAprox",query="SELECT p FROM Producto p WHERE LOWER(p.descripcion) LIKE :descripcion or LOWER(p.descripcion) LIKE :descripcion1 order by p.descripcion asc"),
     @NamedQuery(name="findProductoByDescripcion",query="SELECT p FROM Producto p WHERE LOWER(p.descripcion) =:descripcion"),
-    @NamedQuery(name = "findVentaProducto",query = "SELECT p FROM Producto p where p.precioUnitarioVenta>0"),
-    @NamedQuery(name = "findProductoByCodigoBarraConVentas",query = "SELECT p FROM Producto p WHERE p.codigoBarra =:codigo AND p.precioUnitarioVenta > 0"),
+    @NamedQuery(name = "findVentaProducto",query = "SELECT p FROM Producto p where cast(p.precioUnitarioVenta as INTEGER)>0 or (p.precioUnitarioVenta >0 and p.precioUnitarioVenta<1) and p.id =:id"),
+    @NamedQuery(name = "findProductoByCodigoBarraConVentas",query = "SELECT p FROM Producto p WHERE p.codigoBarra =:codigo AND CAST(p.precioUnitarioVenta AS INTEGER) > 0"),
         @NamedQuery(name = "findProductoByCodigoBarraOnly",query = "SELECT p FROM Producto p WHERE p.codigoBarra =:codigo")
 })
 @Table(name = "PRODUCTO",indexes = {@Index(name = "codigoBarra_Index",columnList = "CODIGO_BARRA")})

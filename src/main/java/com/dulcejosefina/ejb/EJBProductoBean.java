@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,9 +73,9 @@ private long codigoProveedor = 0;
      return xmlProducto(lista);
  }
     @WebMethod(operationName = "selectAllProducto")
-    public String selectAllProducto() {
+    public String selectAllProducto(long idSucursal) {
         
-        Query consulta = em.createNamedQuery("Producto.findAll",Producto.class);
+        Query consulta = consultarProductosDeSucursal(idSucursal);
         List<Producto>lista = consulta.getResultList();
         
             
@@ -83,16 +84,18 @@ private long codigoProveedor = 0;
                     
     }
     @WebMethod
-     public int getRecorCountProductos() {
-        int retorno;        
-            Query productos = em.createNamedQuery("Producto.findAll");            
-            retorno =productos.getResultList().size();    
-            return retorno;        
+     public int getRecorCountProductos(long idSucursal) {
+        
+        
+            Query productos = consultarProductosDeSucursal(idSucursal);
+            
+            return productos.getResultList().size();    
     }
      @WebMethod
-     public String verProductoPaginados(int index, int recordCount) {        
+     public String verProductoPaginados(int index, int recordCount,long idSucursal) {        
          
-         Query consulta = em.createNamedQuery("Producto.findAll");
+         
+         Query consulta = consultarProductosDeSucursal(idSucursal);
          consulta.setMaxResults(recordCount);
          consulta.setFirstResult(index*recordCount);
          List<Producto>lista = consulta.getResultList();
@@ -112,7 +115,7 @@ private long codigoProveedor = 0;
             }else{
                 retorno = crearObjProducto(getDatosProducto);
             }
-//        }
+
         em.flush();
         
         return retorno;
@@ -123,19 +126,20 @@ private long codigoProveedor = 0;
         Producto producto = em.find(Producto.class, idProducto);
         
         switch(modalidad){
-        case "COMPRA":{
-            producto.setPrecioUnitarioCompra(BigDecimal.valueOf(producto.getPrecioUnitarioCompra().doubleValue()+calculoPorcentaje(producto.getPrecioUnitarioCompra(), new BigDecimal(porcentaje)).doubleValue()));
-            
-            retorno = calcularPorcentajeCompra(producto,porcentaje);
-                        
-        }
-        
-        break;
-        case "VENTA":{
-            producto.setPrecioUnitarioVenta(BigDecimal.valueOf(producto.getPrecioUnitarioVenta().doubleValue()+calculoPorcentaje(producto.getPrecioUnitarioVenta(), new BigDecimal(porcentaje)).doubleValue()));
-            retorno = calcularPorcentajeVenta(producto,porcentaje);
-        }
-        }
+                    case "COMPRA":{       
+                            retorno = calcularPorcentajeCompra(producto,porcentaje); 
+                            producto.setPorcentajeCompra(Double.valueOf(porcentaje));
+                            producto.setDetalleCompra(producto.getDetalleCompra().concat(" porcentaje ").concat(porcentaje));
+                    }
+
+                break;
+                    case "VENTA":{
+
+                        retorno = calcularPorcentajeVenta(producto,porcentaje);
+                        producto.setPorcentajeCompra(Double.valueOf(porcentaje));
+                        producto.setDetalleVenta(producto.getDetalleVenta().concat(" porcentaje ").concat(porcentaje));
+                    }
+                }
         return retorno;
     }
 @WebMethod
@@ -148,11 +152,14 @@ private long codigoProveedor = 0;
         if(!listado.isEmpty()){
                 
             for (Producto producto : listado) {
-                producto.setPrecioUnitarioCompra(BigDecimal.valueOf(producto.getPrecioUnitarioCompra().doubleValue()+calculoPorcentaje(producto.getPrecioUnitarioCompra(), new BigDecimal(porcentaje)).doubleValue()));
-                retorno = calcularPorcentajeCompra(producto, porcentaje);
                 
-                producto.setPrecioUnitarioVenta(BigDecimal.valueOf(producto.getPrecioUnitarioVenta().doubleValue()+calculoPorcentaje(producto.getPrecioUnitarioVenta(), new BigDecimal(porcentaje)).doubleValue()));
-                retorno = calcularPorcentajeVenta(producto, porcentaje);
+                retorno = calcularPorcentajeCompra(producto, porcentaje);
+                producto.setDetalleCompra(producto.getDetalleCompra()+" Ingreso porcentaje "+porcentaje+" Proveedor "+em.find(Proveedor.class, idProveedor).getNombre());
+                producto.setPorcentajeCompra(Double.valueOf(porcentaje));
+                
+                retorno = calcularPorcentajeVentaProductosProveedor(producto);
+                producto.setDetalleVenta(producto.getDetalleVenta()+" Ingreso porcentaje"+porcentaje+" Proveedor "+em.find(Proveedor.class, idProveedor).getNombre());
+                producto.setPorcentajeVenta(Double.valueOf(porcentaje));
             }
             
         }
@@ -162,6 +169,70 @@ private long codigoProveedor = 0;
         return retorno;
     }
 
+    private long calcularPorcentajeVentaProductosProveedor(Producto producto){
+        
+        List<VentaProducto> lista = producto.getVenta();
+        BigDecimal resultado;
+        
+        BigDecimal precioUnitarioVenta = null;
+        BigDecimal porcentajeVenta = null;
+        
+        
+        
+        for (VentaProducto ventaProducto : lista) {
+            Query consultaPrecioCompraProducto = em.createQuery("SELECT c FROM CompraProducto c WHERE c.productoFK.id =:producto");
+            consultaPrecioCompraProducto.setParameter("producto", ventaProducto.getProductoFK().getId());
+            List<CompraProducto>listaCompra=consultaPrecioCompraProducto.getResultList();
+            
+            
+            
+            
+            for (CompraProducto compraProducto : listaCompra) {
+                if(Objects.equals(compraProducto.getProducto().getId(), ventaProducto.getProductoFK().getId())&&(ventaProducto.getPackFK().getDescripcion() == null ? compraProducto.getPackFK().getDescripcion() == null : ventaProducto.getPackFK().getDescripcion().equals(compraProducto.getPackFK().getDescripcion()))){
+                                    if(ventaProducto.getPrecio().intValue()>0){
+                                        resultado = calculoPorcentaje(compraProducto.getPrecio(), BigDecimal.valueOf(compraProducto.getPorcentaje()));
+                                        
+                                        ventaProducto.setPrecio(BigDecimal.valueOf(compraProducto.getPrecio().doubleValue()+resultado.doubleValue()));
+                                    }                
+                
+                }
+            }
+  
+            
+            
+
+            
+            
+             ventaProducto.setProductoFK(producto);
+            producto.setPorcentajeVenta(ventaProducto.getPorcentaje());
+            em.flush();
+            
+            
+                
+        }
+           
+            
+        Query consultaPrecioPackUnitario =em.createQuery("SELECT v FROM VentaProducto v WHERE v.packFK.id =:pack AND v.productoFK.id =:idProducto");
+        consultaPrecioPackUnitario.setParameter("pack", (long)1);
+        consultaPrecioPackUnitario.setParameter("idProducto", producto.getId());
+        List<VentaProducto>listaVentaPrecioUnitario = consultaPrecioPackUnitario.getResultList();
+        for (VentaProducto ventaProducto : listaVentaPrecioUnitario) {
+            precioUnitarioVenta=ventaProducto.getPrecio();
+            porcentajeVenta=BigDecimal.valueOf(ventaProducto.getPorcentaje());
+        }
+           resultado = precioUnitarioVenta.multiply((porcentajeVenta.doubleValue()>0?porcentajeVenta:porcentajeVenta.negate())).divide(new BigDecimal(100));
+            
+            if(porcentajeVenta.doubleValue()>0){
+                producto.setPrecioUnitarioVenta(BigDecimal.valueOf(precioUnitarioVenta.doubleValue()+resultado.doubleValue()));
+            }else{
+                producto.setPrecioUnitarioVenta(BigDecimal.valueOf(precioUnitarioVenta.doubleValue()-resultado.doubleValue()));
+            }
+             registrarOperacionVentaEnStock(producto,String.valueOf(porcentajeVenta));
+            em.flush();
+        
+       return producto.getId();
+    
+    }
     private Object transformaAObjetos(String xmlProducto) {
         XStream xstream = new XStream(new StaxDriver());
         xstream.alias("producto", DatosProducto.class);
@@ -183,6 +254,7 @@ private long codigoProveedor = 0;
         List<CompraProducto>lista = producto.getCompra();
         BigDecimal resultado =null;
         BigDecimal percent = new BigDecimal(porcentaje);
+        BigDecimal precionUnitarioCompra=null;
         
                 
         for (CompraProducto compraProducto : lista) {
@@ -190,6 +262,7 @@ private long codigoProveedor = 0;
                case 1:{
                     if(compraProducto.getPrecio().intValue()>0){
                     resultado = calculoPorcentaje(compraProducto.getPrecio(),percent);
+                    
                         compraProducto.setPrecio(BigDecimal.valueOf(compraProducto.getPrecio().doubleValue()+resultado.doubleValue()));
                 }
                }break;
@@ -200,27 +273,7 @@ private long codigoProveedor = 0;
                      }
                }
            }
-//            if(percent.signum()==1){
-//                if(compraProducto.getPrecio().intValue()>0){
-//                    resultado = calculoPorcentaje(compraProducto.getPrecio(),percent);
-//                        compraProducto.setPrecio(BigDecimal.valueOf(compraProducto.getPrecio().doubleValue()+resultado.doubleValue()));
-//                }
-////                    BigDecimal precio = compraProducto.getPrecio();            
-////                    BigDecimal multiplication = precio.multiply(percent);
-////                     resultado = multiplication.divide(new BigDecimal(100), 0);
-//                 
-//            }else{
-//                if(compraProducto.getPrecio().intValue()>0){
-//                        resultado=calculoPorcentaje(compraProducto.getPrecio(), percent);
-//                        compraProducto.setPrecio(BigDecimal.valueOf(compraProducto.getPrecio().doubleValue()-resultado.doubleValue()));
-//                }
-////                    BigDecimal precio = compraProducto.getPrecio();
-////                    BigDecimal multiplication = precio.multiply(percent.abs());
-////                    resultado = multiplication.divide(new BigDecimal(100), 0);
-//                    
-//               
-//            
-//            }
+
             
          
             
@@ -233,12 +286,21 @@ private long codigoProveedor = 0;
             
             
             producto.setPorcentajeCompra(Double.parseDouble(porcentaje));
+            
+            
+            Query consultaPrecioPackUnitario=em.createQuery("SELECT c FROM CompraProducto c WHERE c.packFK.id =:pack AND c.productoFK.id =:idProducto");
+            consultaPrecioPackUnitario.setParameter("pack", (long)1);
+            consultaPrecioPackUnitario.setParameter("idProducto", producto.getId());
+            List<CompraProducto>listaCompraUnitario = consultaPrecioPackUnitario.getResultList();
+            for (CompraProducto compraProducto : listaCompraUnitario) {
+                precionUnitarioCompra=compraProducto.getPrecio();
+            }
 
-            resultado = producto.getPrecioUnitarioCompra().multiply((percent.doubleValue()>0?percent:percent.negate())).divide(new BigDecimal(100));
+            resultado = precionUnitarioCompra.multiply((percent.doubleValue()>0?percent:percent.negate())).divide(new BigDecimal(100));
             if(percent.doubleValue()>0){
-                producto.setPrecioUnitarioCompra(BigDecimal.valueOf(producto.getPrecioUnitarioCompra().doubleValue()+resultado.doubleValue()));  
+                producto.setPrecioUnitarioCompra(BigDecimal.valueOf(precionUnitarioCompra.doubleValue()+resultado.doubleValue()));  
             }else{
-                producto.setPrecioUnitarioCompra(BigDecimal.valueOf(producto.getPrecioUnitarioCompra().doubleValue()-resultado.doubleValue()));
+                producto.setPrecioUnitarioCompra(BigDecimal.valueOf(precionUnitarioCompra.doubleValue()-resultado.doubleValue()));
             }
             registrarOperacionCompraEnStock(producto,porcentaje);
             em.flush();
@@ -247,112 +309,98 @@ private long codigoProveedor = 0;
     }
 
     private long calcularPorcentajeVenta(Producto producto, String porcentaje) {
-        List<VentaProducto> lista = producto.getVenta();
-        BigDecimal resultado;
-        BigDecimal percent= new BigDecimal(porcentaje);
+        List<VentaProducto>lista = producto.getVenta();
+        BigDecimal resultado =null;
+        BigDecimal percent = new BigDecimal(porcentaje);
+        BigDecimal precioUnitarioVenta = null;
+        BigDecimal porcentajeVenta = null;
         for (VentaProducto ventaProducto : lista) {
-            
             switch(percent.signum()){
                 case 1:{
-                        if(ventaProducto.getPrecio().intValue()>0){
-                           resultado = calculoPorcentaje(ventaProducto.getPrecio(), percent);
-                            ventaProducto.setPrecio(BigDecimal.valueOf(ventaProducto.getPrecio().doubleValue()+resultado.doubleValue()));
-                        }                
-                }            
+                    if(ventaProducto.getPrecio().doubleValue()>0){
+                        resultado=calculoPorcentaje(ventaProducto.getPrecio(), percent);
+                        ventaProducto.setPrecio(BigDecimal.valueOf(ventaProducto.getPrecio().doubleValue()+resultado.doubleValue()));
+                        
+                    
+                    }
+                }break;
                 case -1:{
-                    if(ventaProducto.getPrecio().intValue()>0){
-                        resultado = calculoPorcentaje(ventaProducto.getPrecio(), percent);
-                        ventaProducto.setPrecio(BigDecimal.valueOf(ventaProducto.getPrecio().doubleValue()-resultado.doubleValue()));
-                    }                
+                    resultado=calculoPorcentaje(ventaProducto.getPrecio(), percent);
+                    ventaProducto.setPrecio(BigDecimal.valueOf(ventaProducto.getPrecio().doubleValue()-resultado.doubleValue()));
                 }
+            
             }
             
+             ventaProducto.setProductoFK(producto);
             
-//            if(percent.signum()==1){
-//                if(ventaProducto.getPrecio().intValue()>0){
-//                    resultado = calculoPorcentaje(ventaProducto.getPrecio(), percent);
-//                    ventaProducto.setPrecio(BigDecimal.valueOf(ventaProducto.getPrecio().doubleValue()+resultado.doubleValue()));
-//                }
-////                BigDecimal precio = ventaProducto.getPrecio();
-////                BigDecimal multiplication = precio.multiply(percent);
-////                resultado = multiplication.divide(new BigDecimal(100), 0);
-//                
-//            }else{
-//                if(ventaProducto.getPrecio().intValue()>0){
-//                 resultado = calculoPorcentaje(ventaProducto.getPrecio(), percent);
-//                 ventaProducto.setPrecio(BigDecimal.valueOf(ventaProducto.getPrecio().doubleValue()-resultado.doubleValue()));
-//                }
-////                BigDecimal precio = ventaProducto.getPrecio();
-////                BigDecimal multiplication = precio.multiply(percent.abs());
-////                resultado = multiplication.divide(new BigDecimal(100), 0);
-//                
-//            }
+            em.flush();
             
-            
-            
-            
-            
-                
         }
-           
-            producto.setPorcentajeVenta(Double.parseDouble(porcentaje));
         
-           resultado = producto.getPrecioUnitarioVenta().multiply((percent.doubleValue()>0?percent:percent.negate())).divide(new BigDecimal(100));
+        
+        Query consultaPrecioPackUnitario =em.createQuery("SELECT v FROM VentaProducto v WHERE v.packFK.id =:pack AND v.productoFK.id =:idProducto");
+        consultaPrecioPackUnitario.setParameter("pack", (long)1);
+        consultaPrecioPackUnitario.setParameter("idProducto", producto.getId());
+        List<VentaProducto>listaVentaPrecioUnitario = consultaPrecioPackUnitario.getResultList();
+        for (VentaProducto ventaProducto : listaVentaPrecioUnitario) {
+            precioUnitarioVenta=ventaProducto.getPrecio();
+            porcentajeVenta=BigDecimal.valueOf(ventaProducto.getPorcentaje());
+        }
+           resultado = precioUnitarioVenta.multiply((porcentajeVenta.doubleValue()>0?porcentajeVenta:porcentajeVenta.negate())).divide(new BigDecimal(100));
             
-            if(percent.doubleValue()>0){
-                producto.setPrecioUnitarioVenta(BigDecimal.valueOf(producto.getPrecioUnitarioCompra().doubleValue()+resultado.doubleValue()));
+            if(porcentajeVenta.doubleValue()>0){
+                producto.setPrecioUnitarioVenta(BigDecimal.valueOf(precioUnitarioVenta.doubleValue()+resultado.doubleValue()));
             }else{
-                producto.setPrecioUnitarioVenta(BigDecimal.valueOf(producto.getPrecioUnitarioCompra().doubleValue()-resultado.doubleValue()));
+                producto.setPrecioUnitarioVenta(BigDecimal.valueOf(precioUnitarioVenta.doubleValue()-resultado.doubleValue()));
             }
-             registrarOperacionVentaEnStock(producto,porcentaje);
+             registrarOperacionVentaEnStock(producto,String.valueOf(porcentajeVenta));
             em.flush();
         
-       return producto.getId();
+        
+        
+        return producto.getId();
     }
 
     private long crearObjProducto(DatosProducto datosProducto) {   
          Producto producto = new Producto();
         try {  
-        producto.setCantidadIngresada(datosProducto.getCantidadIngresada());
-        producto.setCantidadInicial(datosProducto.getPrimerCantidadInicial());
-        producto.setCantidadTotalActual(datosProducto.getCantidadTotalActual());
-        producto.setCodigoBarra(datosProducto.getCodigoBarra());
-        producto.setDescripcion(datosProducto.getDescripcion());
-        producto.setDetalleProducto(datosProducto.getDetalle());
-        producto.setDetalleCompra(datosProducto.getCompraProducto().getDetalle());
-        producto.setDetalleVenta(datosProducto.getVentaProducto().getDetalle());
-        producto.setFraccionado((char)datosProducto.getFraccionado());
-        producto.setFechaCantidadIngresada(Calendar.getInstance().getTime());
-        producto.setFechaIngresoInicial(Calendar.getInstance().getTime());
-        producto.setFechaUltimaActualizacion(Calendar.getInstance().getTime());
-        producto.setFechaUltimoIngreso(Calendar.getInstance().getTime());
+                    producto.setCantidadIngresada(datosProducto.getCantidadIngresada());
+                    producto.setCantidadInicial(datosProducto.getPrimerCantidadInicial());
+                    producto.setCantidadTotalActual(datosProducto.getCantidadTotalActual());
+                    producto.setCodigoBarra(datosProducto.getCodigoBarra());
+                    producto.setDescripcion(datosProducto.getDescripcion());
+                    producto.setDetalleProducto(datosProducto.getDetalle());
+                    producto.setDetalleCompra(datosProducto.getCompraProducto().getDetalle());
+                    producto.setDetalleVenta(datosProducto.getVentaProducto().getDetalle());
+                    producto.setFraccionado((char)datosProducto.getFraccionado());
+                    producto.setFechaCantidadIngresada(Calendar.getInstance().getTime());
+                    producto.setFechaIngresoInicial(Calendar.getInstance().getTime());
+                    producto.setFechaUltimaActualizacion(Calendar.getInstance().getTime());
+                    producto.setFechaUltimoIngreso(Calendar.getInstance().getTime());        
+                            try {
+                                Date fechaVencimiento = new SimpleDateFormat("dd/MM/yyyy").parse(datosProducto.getFechaVencimiento());
+
+                                producto.setFechaVencimiento(fechaVencimiento);
+                            } catch (ParseException ex) {
+                                Logger.getLogger(EJBProductoBean.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                    producto.setPersonaFK(em.find(Persona.class, datosProducto.getPersona().getId()));
+                    producto.setPorcentajeCompra((datosProducto.getPorcentajeCompra()>0?datosProducto.getPorcentajeCompra():0));
+                    producto.setPorcentajeVenta((datosProducto.getPorcentajeVenta()>0?datosProducto.getPorcentajeVenta():0));
+                    producto.setPrecioUnitarioCompra(datosProducto.getPrecioUnitarioCompra()>0?BigDecimal.valueOf(datosProducto.getPrecioUnitarioCompra()):BigDecimal.ZERO);
+                    producto.setPrecioUnitarioVenta(datosProducto.getPrecioUnitarioVenta()>0?BigDecimal.valueOf(datosProducto.getPrecioUnitarioVenta()):BigDecimal.ZERO);
+                    producto.setProveedorFK(em.find(Proveedor.class, datosProducto.getProveedor().getId()));
+                    producto.setSucursalFK(em.find(Sucursal.class, datosProducto.getSucursal().getId()));
+                    em.persist(producto);
         
+                        persistirListaCompraProducto(producto,datosProducto);
+                        persistirListaVentaProducto(producto,datosProducto);
+                        persistirListaProductosProveedor(datosProducto);
+                        persistirProductosDeSucursal(datosProducto);
+                        persistirListaStockProducto(producto);
         
-        
-    try {
-        Date fechaVencimiento = new SimpleDateFormat("dd/MM/yyyy").parse(datosProducto.getFechaVencimiento());
-        
-        producto.setFechaVencimiento(fechaVencimiento);
-    } catch (ParseException ex) {
-        Logger.getLogger(EJBProductoBean.class.getName()).log(Level.SEVERE, null, ex);
-    }
-        producto.setPersonaFK(em.find(Persona.class, datosProducto.getPersona().getId()));
-        producto.setPorcentajeCompra((datosProducto.getPorcentajeCompra()>0?datosProducto.getPorcentajeCompra():0));
-        producto.setPorcentajeVenta((datosProducto.getPorcentajeVenta()>0?datosProducto.getPorcentajeVenta():0));
-        producto.setPrecioUnitarioCompra(datosProducto.getPrecioUnitarioCompra()>0?BigDecimal.valueOf(datosProducto.getPrecioUnitarioCompra()):BigDecimal.ZERO);
-        producto.setPrecioUnitarioVenta(datosProducto.getPrecioUnitarioVenta()>0?BigDecimal.valueOf(datosProducto.getPrecioUnitarioVenta()):BigDecimal.ZERO);
-        producto.setProveedorFK(em.find(Proveedor.class, datosProducto.getProveedor().getId()));
-        producto.setSucursalFK(em.find(Sucursal.class, datosProducto.getSucursal().getId()));
-        em.persist(producto);
-        
-        persistirListaCompraProducto(producto,datosProducto);
-        persistirListaVentaProducto(producto,datosProducto);
-        persistirListaProductosProveedor(datosProducto);
-        persistirProductosDeSucursal(datosProducto);
-        persistirListaStockProducto(producto);
-        
-} catch (Exception e) {
-        }
+            } catch (Exception e) {
+            }
         
         return producto.getId();
     }
@@ -372,13 +420,15 @@ private long codigoProveedor = 0;
             producto.setDescripcion(datosProducto.getDescripcion());
         }
         producto.setDetalleCompra(datosProducto.getCompraProducto().getDetalle());
-        producto.setDetalleProducto(datosProducto.getDetalle());
+        producto.setDetalleProducto(datosProducto.getDetalle());        
         producto.setDetalleVenta(datosProducto.getVentaProducto().getDetalle());
         producto.setFechaUltimaActualizacion(Calendar.getInstance().getTime());
         producto.setPrecioUnitarioCompra(BigDecimal.valueOf(datosProducto.getPrecioUnitarioCompra()));
         producto.setPrecioUnitarioVenta(BigDecimal.valueOf(datosProducto.getPrecioUnitarioVenta()));
         producto.setCodigoBarra(datosProducto.getCodigoBarra());
-        producto.setFraccionado((char)datosProducto.getFraccionado());
+        producto.setPorcentajeCompra(datosProducto.getPorcentajeCompra()>0?datosProducto.getPorcentajeCompra():0);
+        producto.setPorcentajeVenta(datosProducto.getPorcentajeVenta()>0?datosProducto.getPorcentajeVenta():0);
+        producto.setFraccionado(datosProducto.getFraccionado());
         if(producto.getCantidadIngresada()==0){
             
             try {
@@ -428,7 +478,7 @@ private long codigoProveedor = 0;
                 Query consulta = em.createQuery("SELECT c FROM CompraProducto c WHERE c.productoFK.id =:id");
                 consulta.setParameter("id", producto.getId());
                 producto.setCompra(consulta.getResultList());
-                producto.setFechaUltimaCompra(Calendar.getInstance().getTime());
+                //producto.setFechaUltimaCompra(Calendar.getInstance().getTime());
                 em.merge(producto);
                 
                 
@@ -455,7 +505,7 @@ private long codigoProveedor = 0;
             Query consulta = em.createQuery("SELECT v FROM VentaProducto v WHERE v.productoFK.id =:id");
             consulta.setParameter("id", producto.getId());
             producto.setVenta(consulta.getResultList());
-            producto.setFechaUltimaVenta(Calendar.getInstance().getTime());
+            //producto.setFechaUltimaVenta(Calendar.getInstance().getTime());
             em.merge(producto);
            
                     
@@ -547,13 +597,15 @@ private long codigoProveedor = 0;
     public long aplicarCantidadIngresada(long idProducto, int cantidadIngresada) {
         
             Producto producto = em.find(Producto.class, idProducto);
+            int cantidadCalculada = cantidadIngresada+producto.getCantidadTotalActual();
             producto.setCantidadIngresada(cantidadIngresada);                        
             producto.setFechaUltimoIngreso(Calendar.getInstance().getTime());
-            producto.setFechaUltimaActualizacion(Calendar.getInstance().getTime());
-            
-            int cantidad = cantidadIngresada+producto.getCantidadTotalActual();
-            producto.setCantidadTotalActual(cantidad);
+            producto.setFraccionado(0);            
+            producto.setFechaUltimaActualizacion(Calendar.getInstance().getTime());           
+            producto.setCantidadTotalActual(cantidadCalculada);
             producto.setFechaCantidadIngresada(Calendar.getInstance().getTime());
+            producto.setFechaUltimaCompra(Calendar.getInstance().getTime());
+            producto.setDetalleCompra("Ultima cantidad ingresada "+cantidadIngresada);
             registrarCantidadIngresadaEnStock(producto,cantidadIngresada);
         
             em.merge(producto);
@@ -572,7 +624,7 @@ private long codigoProveedor = 0;
         stock.setPrecioUnitarioCompra(BigDecimal.ZERO);
         stock.setPrecioUnitarioVenta(BigDecimal.ZERO);
         stock.setProducto(producto);
-        stock.setDetalle("CANTIDAD AGREGADA EL "+Calendar.getInstance().getTime());
+        stock.setDetalle(" CANTIDAD AGREGADA EL "+Calendar.getInstance().getTime());
         em.persist(stock);
         
         
@@ -645,36 +697,12 @@ public long modificarFechaVencimientoProducto(long idProducto,String nuevaFechaV
     return producto.getId();
 }
 
-//    private void registrarCambioFechaVencimientoEnStock(Producto producto, String fechaVencimiento) {
-//        
-//        StockProducto stock = new StockProducto();
-//        
-//            stock.setCantidadActual(0);
-//            stock.setCantidadAgregada(0);
-//            stock.setCantidadInicial(0);
-//            stock.setDetalle("SE MODIFICO LA FECHA DE VENCIMIENTO DEL PRODUCTO POR "+ fechaVencimiento);
-//            stock.setFechaAgregadoProducto(producto.getFechaIngresoInicial());
-//            
-//            stock.setPorcentajeCompra(0);
-//            stock.setPorcentajeVenta(0);        
-//            stock.setPrecioUnitarioCompra(BigDecimal.ZERO);
-//            stock.setPrecioUnitarioVenta(BigDecimal.ZERO);
-//            stock.setProducto(producto);
-//            em.persist(stock);
-//        
-//        Query consulta = em.createNamedQuery("findAllStockForIdProduct");
-//        consulta.setParameter("id", producto.getId());
-//        
-//        producto.setStockProductoList(consulta.getResultList());
-//        em.merge(producto);
-//        em.flush();
-//        
-//    }
    
 @WebMethod
-    public String buscarTodosLosVentaProducto() {
+    public String buscarTodosLosVentaProducto(long idSucursal) {
         StringBuilder xml=new StringBuilder("<Lista>");
-        Query consulta = em.createNamedQuery("findVentaProducto",Producto.class);
+        Query consulta = em.createNamedQuery("findVentaProducto",Producto.class).setParameter("id", idSucursal);
+        
         
     
        List<Producto>lista = consulta.getResultList();
@@ -702,18 +730,18 @@ public long modificarFechaVencimientoProducto(long idProducto,String nuevaFechaV
                 }else{
                     
                     if(resto<2000 && resto>0&&!"Precio Unitario".equals(packproducto.getDescripcion())){
-                        resultado = new StringBuilder(5).append("El Producto ").append(producto.getDescripcion()).append(" se esta por quedar sin stock, el actual es ").append(producto.getCantidadTotalActual()).toString();
+                        resultado = new StringBuilder(5).append("El Producto ").append(producto.getDescripcion().toUpperCase()).append(" se esta por quedar sin stock, el actual es ").append(producto.getCantidadTotalActual()).toString();
 
                     }else{
                         if(resto<=5&&resto>0&&"Precio Unitario".equals(packproducto.getDescripcion())){
-                            resultado = new StringBuilder().append("El Producto ").append(producto.getDescripcion()).append(" se esta por quedar sin stock, el actual es ").append(producto.getCantidadTotalActual()).toString();
+                            resultado = new StringBuilder().append("El Producto ").append(producto.getDescripcion().toUpperCase()).append(" se esta por quedar sin stock, el actual es ").append(producto.getCantidadTotalActual()).toString();
                         }else{
                                 if(resto==0){
-                                    resultado= new StringBuilder(5).append("El Producto ").append(producto.getDescripcion()).append(" se quedo sin stock").toString();
+                                    resultado= new StringBuilder(5).append("El Producto ").append(producto.getDescripcion().toUpperCase()).append(" para la cantidad ").append(cantidad).append(" posee stock para más No!!!").toString();
                                 }else{
 
                                     if(resto<0){                    
-                                        resultado =new StringBuilder(5).append("El Producto ").append(producto.getDescripcion()).append(" con ").append(packproducto.getDescripcion()).append(" no posee stock para la cantidad ").append(cantidad).append(" elija otro pack o combinación").toString();
+                                        resultado =new StringBuilder(5).append("El Producto ").append(producto.getDescripcion().toUpperCase()).append(" con ").append(packproducto.getDescripcion()).append(" no posee stock para la cantidad ").append(cantidad).append(" elija otro pack o combinación").toString();
                                     }
                                 }
                         }
@@ -835,35 +863,38 @@ public long modificarFechaVencimientoProducto(long idProducto,String nuevaFechaV
         
         for (ItemDetalleVentaSucursalItem item : lista) {
             Producto producto = em.find(Producto.class, item.getId());
-            if(item.getNombrePack().equalsIgnoreCase("precio unitario")){
-                producto.setCantidadTotalActual(producto.getCantidadTotalActual()-item.getCantidad());
+             
+             if(producto.getCantidadTotalActual()-item.getCantidad()>0){
+                            if(item.getNombrePack().equalsIgnoreCase("precio unitario")){
+
+                                producto.setCantidadTotalActual(producto.getCantidadTotalActual()-item.getCantidad());
+
+                            }else{
+                                    stockItem = item.getCantidad()*item.getPresentacion();
+                                    producto.setCantidadTotalActual(producto.getCantidadTotalActual()-stockItem);
+                            }
             
-            }else{
-                     stockItem = item.getCantidad()*item.getPresentacion();
-                    producto.setCantidadTotalActual(producto.getCantidadTotalActual()-stockItem);
-            }
-            
-             producto.setFechaUltimaActualizacion(Calendar.getInstance().getTime());
-             producto.setFechaUltimaVenta(Calendar.getInstance().getTime());
-             StockProducto stock = new StockProducto();
-             
-                    stock.setCantidadActual(producto.getCantidadTotalActual());
-                    stock.setCantidadAgregada(0);
-                    stock.setCantidadInicial(0);
-                    stock.setDetalle("SE DESCONTO STOCK DEL PRODUCTO POR VENTA N°"+venta.getId());
-                    stock.setFechaAgregadoProducto(producto.getFechaCantidadIngresada());
-                    stock.setPorcentajeCompra(0);
-                    stock.setPorcentajeVenta(0);
-                    stock.setPrecioUnitarioCompra(BigDecimal.ZERO);
-                    stock.setPrecioUnitarioVenta(BigDecimal.ZERO);
-                    stock.setProducto(producto);
-                    em.persist(stock);
-             
-             Query consulta = em.createNamedQuery("findAllStockForIdProduct");
-             consulta.setParameter("id", producto.getId());
-             
-             producto.setStockProductoList(consulta.getResultList());
-             
+                            producto.setFechaUltimaActualizacion(Calendar.getInstance().getTime());
+                            producto.setFechaUltimaVenta(Calendar.getInstance().getTime());
+                            StockProducto stock = new StockProducto();
+
+                                   stock.setCantidadActual(producto.getCantidadTotalActual());
+                                   stock.setCantidadAgregada(0);
+                                   stock.setCantidadInicial(0);
+                                   stock.setDetalle("SE DESCONTO STOCK DEL PRODUCTO POR VENTA N°"+venta.getId());
+                                   stock.setFechaAgregadoProducto(producto.getFechaCantidadIngresada());
+                                   stock.setPorcentajeCompra(0);
+                                   stock.setPorcentajeVenta(0);
+                                   stock.setPrecioUnitarioCompra(BigDecimal.ZERO);
+                                   stock.setPrecioUnitarioVenta(BigDecimal.ZERO);
+                                   stock.setProducto(producto);
+                                   em.persist(stock);
+
+                            Query consulta = em.createNamedQuery("findAllStockForIdProduct");
+                            consulta.setParameter("id", producto.getId());
+
+                            producto.setStockProductoList(consulta.getResultList());
+             }
         }
     }
     
@@ -904,7 +935,7 @@ public long modificarFechaVencimientoProducto(long idProducto,String nuevaFechaV
         
         
         File file = new File(PATH+fileName);
-//        try (
+
 fis = new FileInputStream(file);
         try {
             isr = new InputStreamReader(fis,"UTF-8");
@@ -1126,25 +1157,30 @@ public String buscarProductoPorCodigoDeBarra(String codigoBarra,int cantidad){
         return xml.append("</Lista>").toString();
 }
 private void ventaProducto(StringBuilder xml, List<Producto> lista, List<VentaProducto> venta,int cantidad) {    
-    StringBuilder xmlVentaProducto=null;        
+         
        for (Producto producto : lista) {                   
            
            venta=producto.getVenta();
-           if(!venta.isEmpty()){
-               xmlVentaProducto=new StringBuilder(5); 
+           
+               if(!venta.isEmpty()){
+                   StringBuilder  xmlVentaProducto = new StringBuilder(5); 
                     for (VentaProducto ventaProducto : venta) {               
                         
                                 if(ventaProducto.getPrecio().doubleValue()>0){
                                                                             
-                                         xmlVentaProducto.append("<itemVenta>").append("<idVentaProducto>").append(ventaProducto.getId()).append("</idVentaProducto>")
+                                    xmlVentaProducto.append("<itemVenta>")
+                                                 .append("<idVentaProducto>").append(ventaProducto.getId()).append("</idVentaProducto>")
                                                  .append("<precio>").append(ventaProducto.getPrecio().doubleValue()).append("</precio>")
                                                  .append("<nombrePack>").append(ventaProducto.getPackFK().getDescripcion()).append("</nombrePack>")
                                                  .append("<idPack>").append(ventaProducto.getPackFK().getId()).append("</idPack>")
                                                  .append("<presentacion>").append(ventaProducto.getPresentacion()).append("</presentacion>")                                 
                                                  .append("</itemVenta>\n");
+                                         
+                                 
                                 }                                    
-                    }                    
-                    if(xmlVentaProducto!=null){
+                              
+                    }
+                 
                                  xml.append("<item>").append("<id>").append(producto.getId()).append("</id>")
                                  .append("<descripcion>").append(producto.getDescripcion()).append("</descripcion>")
                                  .append("<codigo>").append(producto.getCodigoBarra()).append("</codigo>")
@@ -1152,9 +1188,11 @@ private void ventaProducto(StringBuilder xml, List<Producto> lista, List<VentaPr
                                  .append("<stock>").append(producto.getCantidadTotalActual()).append("</stock>")
                                  .append(xmlVentaProducto);
                             xml.append("</item>");
-                    }
-            }
+                 
+           
        }
+       }
+        
     }
 
     private String xmlProducto(List<Producto> lista) {
@@ -1250,9 +1288,14 @@ private void ventaProducto(StringBuilder xml, List<Producto> lista, List<VentaPr
     }
 
     private BigDecimal calculoPorcentaje(BigDecimal precioProducto, BigDecimal percent) {
-        BigDecimal precio = precioProducto;            
+                    BigDecimal precio = precioProducto;            
                     BigDecimal multiplication = precio.multiply(percent);
         return multiplication.divide(new BigDecimal(100), 0);
+    }
+
+    private Query consultarProductosDeSucursal(long idSucursal) {
+        return em.createNamedQuery("Producto.findAllBySucursal").setParameter("id", idSucursal);
+         
     }
     
 }

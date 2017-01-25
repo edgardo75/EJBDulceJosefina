@@ -18,10 +18,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 @Entity
-@NamedQueries({@NamedQuery(name = "findVentasDiaBySucursal",query = "SELECT v FROM VentaSucursal v WHERE  v.fechaVenta = CAST(CURRENT_DATE as DATE)"),
+@NamedQueries({@NamedQuery(name = "findVentasDiaBySucursalAndFechaYHora",query = "SELECT v FROM VentaSucursal v WHERE  v.fechaVenta = CAST(CURRENT_DATE as DATE) and v.horaVenta BETWEEN ?1 AND ?2 and v.anulado=0 order by v.id desc"),
                 @NamedQuery(name = "findVentaDelDiaPorFecha",query = "SELECT v FROM VentaSucursal v WHERE v.fechaVenta = Cast(:fecha as DATE) order by v.id desc"),
-                @NamedQuery(name = "findAllVentas",query = "SELECT v FROM VentaSucursal v WHERE v.anulado = 0 order by v.id desc")})
+                @NamedQuery(name = "findAllVentas",query = "SELECT v FROM VentaSucursal v order by v.id desc"),
+                @NamedQuery(name = "findVentaBySucursal",query = "SELECT v FROM VentaSucursal v WHERE v.id =:idVenta AND v.sucursalFK.id =:idSucursal AND cast(v.anulado as integer) = 0 order by v.id desc")})
 public class VentaSucursal implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,6 +36,9 @@ public class VentaSucursal implements Serializable {
     @Column(name="FECHA_VENTA")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date fechaVenta;
+    @Column(name = "HORA_VENTA")
+    @Temporal(TemporalType.TIME)
+    private Date horaVenta;
     @Column(name = "CANTIDAD",precision = 15,scale = 2,columnDefinition = "INTEGER default '0'")
     private Integer cantidad;
     @Column(name = "PORCENTAJE_DESCUENTO",columnDefinition = "DECIMAL(15,3) DEFAULT'0.000'")
@@ -121,6 +126,14 @@ public class VentaSucursal implements Serializable {
 
     public BigDecimal getDescuentoPesos() {
         return descuentoPesos;
+    }
+
+    public Date getHoraVenta() {
+        return horaVenta;
+    }
+
+    public void setHoraVenta(Date horaVenta) {
+        this.horaVenta = horaVenta;
     }
 
     public void setDescuentoPesos(BigDecimal descuentoPesos) {
@@ -277,6 +290,7 @@ public class VentaSucursal implements Serializable {
     
     
                     xml.append("<id>").append(this.getId()).append("</id>")
+                            .append("<hora>").append(this.getHoraVenta()!=null?new SimpleDateFormat("HH:mm ss").format(this.getHoraVenta()):0).append("</hora>")
                             .append("<fecha>").append(this.getFechaVenta()!=null?new SimpleDateFormat("dd/MM/yyyy").format(this.getFechaVenta()):0).append("</fecha>")
                             .append("<cantidad>").append(this.getCantidad()).append("</cantidad>")
                             .append("<porcentajeDescuento>").append(this.getPorcentajeDescuento()).append("</porcentajeDescuento>")
