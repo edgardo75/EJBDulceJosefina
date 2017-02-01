@@ -5,6 +5,9 @@
  */
 package com.dulcejosefina.utils;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+
 /**
  *
  * @author Edgardo
@@ -23,6 +26,10 @@ public class DatosVentaSucursal {
     private DatosPersona persona;
     private DatosSucursal sucursal;
     private DatosDetalleVentaSucursal detalleVenta;
+    private DatosProveedor proveedor;
+
+    public DatosVentaSucursal() {
+    }
 
     public long getId() {
         return id;
@@ -76,5 +83,19 @@ public class DatosVentaSucursal {
         return idUsuarioExpidioVenta;
     }
 
-    
+    public DatosProveedor getProveedor() {
+        return proveedor;
+    }
+
+       public DatosVentaSucursal transformarAObjeto(String datosVenta) {
+        XStream xstream = new XStream(new StaxDriver());
+        xstream.alias("venta", DatosVentaSucursal.class);
+        xstream.alias("persona", DatosPersona.class);
+        xstream.alias("sucursal",DatosSucursal.class);
+        xstream.alias("detalleVenta",DatosDetalleVentaSucursal.class);
+        xstream.alias("itemVenta", ItemDetalleVentaSucursalItem.class);
+        xstream.alias("proveedor", DatosProveedor.class);
+        xstream.addImplicitCollection(DatosDetalleVentaSucursal.class, "list");
+        return (DatosVentaSucursal) xstream.fromXML(datosVenta);
+    }
 }

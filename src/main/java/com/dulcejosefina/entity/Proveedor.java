@@ -30,7 +30,8 @@ public class Proveedor implements Serializable {
     private String detalles;
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "proveedorFK",targetEntity = Producto.class)
     private List<Producto>producto;
-
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "proveedorFK",targetEntity = Pedido.class)
+    private List<Pedido>pedido;
     public Proveedor(){}
     public Long getId() {
         return id;
@@ -62,6 +63,14 @@ public class Proveedor implements Serializable {
 
     public void setProducto(List<Producto> producto) {
         this.producto = producto;
+    }
+
+    public List<Pedido> getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(List<Pedido> pedido) {
+        this.pedido = pedido;
     }
 
     @Override

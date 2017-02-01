@@ -1,20 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.dulcejosefina.ejb;
 
 import com.dulcejosefina.entity.DetallePresupuesto;
 import com.dulcejosefina.entity.Presupuesto;
 import com.dulcejosefina.entity.Producto;
-import com.dulcejosefina.utils.DatosDetalleVentaSucursal;
-import com.dulcejosefina.utils.DatosPersona;
-import com.dulcejosefina.utils.DatosSucursal;
+import com.dulcejosefina.entity.Sucursal;
 import com.dulcejosefina.utils.DatosVentaSucursal;
 import com.dulcejosefina.utils.ItemDetalleVentaSucursalItem;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
@@ -26,10 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-/**
- *
- * @author Edgardo
- */
+
 @Stateless
 @LocalBean
 @WebService
@@ -39,37 +27,30 @@ public class EJBPresupuestoBean {
 
     @WebMethod
     public int crearPresupuesto(String xmlPresupuesto){
-         DatosVentaSucursal datosPresupuesto = transformarAObjeto(xmlPresupuesto);
-         Presupuesto presupuesto = new Presupuesto();
-         presupuesto.setDescuentoPesos(BigDecimal.valueOf(datosPresupuesto.getTotalDescuento()));
-         presupuesto.setFechaVenta(Calendar.getInstance().getTime());
-         presupuesto.setIdUsuarioExpidioVenta(datosPresupuesto.getIdUsuarioExpidioVenta());
-         presupuesto.setApellido(datosPresupuesto.getPersona().getApellido());
-         presupuesto.setNombre(datosPresupuesto.getPersona().getNombre());
-         presupuesto.setPorcentajeDescuento(BigDecimal.valueOf(datosPresupuesto.getPorcentajeDescuento()));
-         presupuesto.setPorcentajeRecargo(BigDecimal.valueOf(datosPresupuesto.getPorcentajeRecargo()));
-         presupuesto.setRecargoPesos(BigDecimal.valueOf(datosPresupuesto.getTotalRecargo()));
-         presupuesto.setTotalAPagar(BigDecimal.valueOf(datosPresupuesto.getTotalAPagar()));
-         presupuesto.setTotalDescuento(BigDecimal.valueOf(datosPresupuesto.getTotalDescuento()));
-         presupuesto.setTotalGeneral(BigDecimal.valueOf(datosPresupuesto.getTotalGeneral()));
-         presupuesto.setTotalRecargo(BigDecimal.valueOf(datosPresupuesto.getTotalRecargo()));
-         presupuesto.setCantidad(datosPresupuesto.getCantidad());
-         em.persist(presupuesto);
+         DatosVentaSucursal datosPresupuesto = new DatosVentaSucursal();
+                 datosPresupuesto = datosPresupuesto.transformarAObjeto(xmlPresupuesto);
+                Presupuesto presupuesto = new Presupuesto();
+                presupuesto.setDescuentoPesos(BigDecimal.valueOf(datosPresupuesto.getTotalDescuento()));
+                presupuesto.setFechaVenta(Calendar.getInstance().getTime());
+                presupuesto.setIdUsuarioExpidioVenta(datosPresupuesto.getIdUsuarioExpidioVenta());
+                presupuesto.setApellido(datosPresupuesto.getPersona().getApellido());
+                presupuesto.setNombre(datosPresupuesto.getPersona().getNombre());
+                presupuesto.setPorcentajeDescuento(BigDecimal.valueOf(datosPresupuesto.getPorcentajeDescuento()));
+                presupuesto.setPorcentajeRecargo(BigDecimal.valueOf(datosPresupuesto.getPorcentajeRecargo()));
+                presupuesto.setRecargoPesos(BigDecimal.valueOf(datosPresupuesto.getTotalRecargo()));
+                presupuesto.setTotalAPagar(BigDecimal.valueOf(datosPresupuesto.getTotalAPagar()));
+                presupuesto.setTotalDescuento(BigDecimal.valueOf(datosPresupuesto.getTotalDescuento()));
+                presupuesto.setTotalGeneral(BigDecimal.valueOf(datosPresupuesto.getTotalGeneral()));
+                presupuesto.setTotalRecargo(BigDecimal.valueOf(datosPresupuesto.getTotalRecargo()));
+                presupuesto.setCantidad(datosPresupuesto.getCantidad());
+                presupuesto.setSucursal(em.find(Sucursal.class, datosPresupuesto.getSucursal().getId()));
+                em.persist(presupuesto);
          persistirDetallePresupuesto(presupuesto,datosPresupuesto);
           em.flush();
     
     return presupuesto.getId().intValue();
     }
-    private DatosVentaSucursal transformarAObjeto(String datosVenta) {
-        XStream xstream = new XStream(new StaxDriver());
-        xstream.alias("venta", DatosVentaSucursal.class);
-        xstream.alias("persona", DatosPersona.class);
-        xstream.alias("sucursal",DatosSucursal.class);
-        xstream.alias("detalleVenta",DatosDetalleVentaSucursal.class);
-        xstream.alias("itemVenta", ItemDetalleVentaSucursalItem.class);
-        xstream.addImplicitCollection(DatosDetalleVentaSucursal.class, "list");
-        return (DatosVentaSucursal) xstream.fromXML(datosVenta);
-    }
+
 
     private void persistirDetallePresupuesto(Presupuesto presupuesto, DatosVentaSucursal datosPresupuesto) {
        List<ItemDetalleVentaSucursalItem>lista=datosPresupuesto.getDetalleVenta().getList();

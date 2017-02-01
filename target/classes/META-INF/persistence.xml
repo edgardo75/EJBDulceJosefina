@@ -23,6 +23,8 @@
     <class>com.dulcejosefina.entity.Telefono</class>
     <class>com.dulcejosefina.entity.DetallePresupuesto</class>
     <class>com.dulcejosefina.entity.Presupuesto</class>
+    <class>com.dulcejosefina.entity.DetallePedido</class>
+    <class>com.dulcejosefina.entity.Pedido</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
     </properties>

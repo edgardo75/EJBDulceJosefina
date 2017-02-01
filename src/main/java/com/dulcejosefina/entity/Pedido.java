@@ -25,14 +25,14 @@ import javax.persistence.Temporal;
  * @author Edgardo
  */
 @Entity
-public class Presupuesto implements Serializable {
+public class Pedido implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
+    @TableGenerator(name = "PedidoIdGen",table = "ID_GEN_PEDIDO",pkColumnName = "PEDNAME",pkColumnValue = "Pedido",valueColumnName = "PEDKEY",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "PedidoIdGen")
     @Id
-     @TableGenerator(name = "PresupuestoIdGen",table = "ID_GEN_PRESUPUESTO", pkColumnName="PRENAME",pkColumnValue="Presupuesto", valueColumnName="PREKEY",
-    allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.TABLE,generator = "PresupuestoIdGen")
-    @Column(name = "ID_PRESUPUESTO")
+    @Column(name = "ID_PEDIDO")
     private Long id;
     
     @Column(name="FECHA_VENTA")
@@ -56,17 +56,14 @@ public class Presupuesto implements Serializable {
     private BigDecimal totalAPagar;
     @Column(name = "TOTAL_DESCUENTO",columnDefinition = "DECIMAL(15,3) DEFAULT'0.000'")
     private BigDecimal totalDescuento;
-    @Column(name = "ID_USUARIO_EXPIDIO_VENTA")
-    private long idUsuarioExpidioVenta;
-    @Column(name="NOMBRE_PERSONA_CLIENTE",length = 50)
-    private String nombre;
-    @Column(name="APELLIDO_PERSONA_CLIENTE",length = 50)
-    private String apellido;   
-    @OneToMany(orphanRemoval = true, mappedBy = "presupuesto")
-    private List<DetallePresupuesto> detallepresupuestosList;
+    @Column(name = "ID_USUARIO_EXPIDIO_PEDIDO")
+    private long idUsuarioExpidioPedido;    
+    @OneToMany(mappedBy = "pedido",orphanRemoval = true)
+    private List<DetallePedido>detallePedidoList;
     @ManyToOne
     private Sucursal sucursalFK;
-
+    @ManyToOne
+    private Proveedor proveedorFK;
     public Long getId() {
         return id;
     }
@@ -155,43 +152,35 @@ public class Presupuesto implements Serializable {
         this.totalDescuento = totalDescuento;
     }
 
-    public long getIdUsuarioExpidioVenta() {
-        return idUsuarioExpidioVenta;
+    public long getIdUsuarioExpidioPedido() {
+        return idUsuarioExpidioPedido;
     }
 
-    public void setIdUsuarioExpidioVenta(long idUsuarioExpidioVenta) {
-        this.idUsuarioExpidioVenta = idUsuarioExpidioVenta;
+    public void setIdUsuarioExpidioPedido(long idUsuarioExpidioPedido) {
+        this.idUsuarioExpidioPedido = idUsuarioExpidioPedido;
     }
 
-    public String getNombre() {
-        return nombre;
+    public Proveedor getProveedorFK() {
+        return proveedorFK;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setProveedorFK(Proveedor proveedorFK) {
+        this.proveedorFK = proveedorFK;
     }
 
-    public String getApellido() {
-        return apellido;
+    public List<DetallePedido> getDetallePedidoList() {
+        return detallePedidoList;
     }
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
+    public void setDetallePedidoList(List<DetallePedido> detallePedidoList) {
+        this.detallePedidoList = detallePedidoList;
     }
 
-    public List<DetallePresupuesto> getDetallepresupuestosList() {
-        return detallepresupuestosList;
-    }
-
-    public void setDetallepresupuestosList(List<DetallePresupuesto> detallepresupuestosList) {
-        this.detallepresupuestosList = detallepresupuestosList;
-    }
-
-    public Sucursal getSucursal() {
+    public Sucursal getSucursalFK() {
         return sucursalFK;
     }
 
-    public void setSucursal(Sucursal sucursalFK) {
+    public void setSucursalFK(Sucursal sucursalFK) {
         this.sucursalFK = sucursalFK;
     }
 
@@ -205,46 +194,40 @@ public class Presupuesto implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Presupuesto)) {
+        if (!(object instanceof Pedido)) {
             return false;
         }
-        Presupuesto other = (Presupuesto) object;
+        Pedido other = (Pedido) object;
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "com.dulcejosefina.entity.Presupuesto[ id=" + id + " ]";
+        return "com.dulcejosefina.entity.Pedido[ id=" + id + " ]";
     }
-     public String toXML(){
-    StringBuilder xml = new StringBuilder(5);
-    
-    
-                    xml.append("<id>").append(this.getId()).append("</id>")
-                            .append("<fecha>").append(this.getFechaVenta()!=null?new SimpleDateFormat("dd/MM/yyyy").format(this.getFechaVenta()):0).append("</fecha>")
-                            .append("<cantidad>").append(this.getCantidad()).append("</cantidad>")
+    public String toXML(){
+        StringBuilder item = new StringBuilder("<pedido>");
+              item.append("<id>").append(this.getId()).append("</id>")
+                      .append("<fecha>").append(this.getFechaVenta()!=null?new SimpleDateFormat("dd/MM/yyyy").format(this.getFechaVenta()):0).append("</fecha>")
+                      .append("<cantidad>").append(this.getCantidad()).append("</cantidad>")
                             .append("<porcentajeDescuento>").append(this.getPorcentajeDescuento()).append("</porcentajeDescuento>")
                             .append("<porcentajeRecargo>").append(this.getPorcentajeRecargo()).append("</porcentajeRecargo>")
                             .append("<descuentoPesos>").append(this.getDescuentoPesos()).append("</descuentoPesos>")
                             .append("<recargoPesos>").append(this.getRecargoPesos()).append("</recargoPesos>")
                             .append("<totalGeneral>").append(this.getTotalGeneral()).append("</totalGeneral>")
                             .append("<totalAPagar>").append(this.getTotalAPagar()).append("</totalAPagar>")
-                            .append("<nombre>").append(this.getNombre()).append("</nombre>")
-                            .append("<apellido>").append(this.getApellido()).append("</apellido>")                            ;
-                            
-
-                    if(!this.getDetallepresupuestosList().isEmpty()){
-                        xml.append("<detallePresupuesto>");                        
-                            for (DetallePresupuesto detalle : detallepresupuestosList) {
-                                xml.append(detalle.toXML());
-                            }
+                      .append("<proveedor><![CDATA[").append(this.getProveedorFK().getNombre()).append("]]></proveedor>");
+              
+                if(!this.getDetallePedidoList().isEmpty()){
+                        item.append("<detallePedido>");
+                        for (DetallePedido detallePedido : detallePedidoList) {
+                                item.append(detallePedido.toXML());
+                        }
+              
+                }
+                item.append("</detallePedido>").append("</pedido>");
+              return item.toString();
         
-        
-        xml.append("</detallePresupuesto>");
     
-    
-    }
-            
-        return xml.toString();
     }
 }

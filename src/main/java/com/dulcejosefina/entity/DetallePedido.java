@@ -13,8 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 
 /**
@@ -22,17 +20,15 @@ import javax.persistence.TableGenerator;
  * @author Edgardo
  */
 @Entity
-@NamedQueries({@NamedQuery(name = "selectAllDetallePresupuestoById",query = "SELECT d FROM DetallePresupuesto d WHERE d.presupuesto.id =:id")})
-public class DetallePresupuesto implements Serializable {
+public class DetallePedido implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @TableGenerator(name = "DetallePresupuestoIdGen",table = "ID_GEN_DETALLEPRESUPUESTO", pkColumnName="DETPRENAME",pkColumnValue="DetallePresupuesto", valueColumnName="DETPREKEY",
-    allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.TABLE,generator = "DetallePresupuestoIdGen")
-    @Column(name = "ID_DETALLE_PRESUPUESTO")
+    @TableGenerator(name = "DetallePedidoIdGen",table = "ID_GEN_DETALLEPEDIDO",pkColumnName = "DETPEDNAME",pkColumnValue = "DetallePedido",valueColumnName = "DETPEDKEY",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "DetallePedidoIdGen")
+    @Column(name = "ID_DETALLE_PEDIDO")
     private Long id;
-
+    
     @Column(name = "SUBTOTAL",columnDefinition = "DECIMAL(15,3) DEFAULT'0.000'")
     private BigDecimal subtotal;   
     @Column(name = "IDPACK")
@@ -51,8 +47,9 @@ public class DetallePresupuesto implements Serializable {
     private double precio;    
     @Column(name = "CANTIDAD")
     private int cantidad;
+    
     @ManyToOne
-    private Presupuesto presupuesto;    
+    private Pedido pedido;
     @ManyToOne
     private Producto producto;
     public Long getId() {
@@ -61,6 +58,14 @@ public class DetallePresupuesto implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
     }
 
     public BigDecimal getSubtotal() {
@@ -135,14 +140,6 @@ public class DetallePresupuesto implements Serializable {
         this.cantidad = cantidad;
     }
 
-    public Presupuesto getPresupuesto() {
-        return presupuesto;
-    }
-
-    public void setPresupuesto(Presupuesto presupuesto) {
-        this.presupuesto = presupuesto;
-    }
-
     public Producto getProducto() {
         return producto;
     }
@@ -161,22 +158,21 @@ public class DetallePresupuesto implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DetallePresupuesto)) {
+        if (!(object instanceof DetallePedido)) {
             return false;
         }
-        DetallePresupuesto other = (DetallePresupuesto) object;
+        DetallePedido other = (DetallePedido) object;
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "com.dulcejosefina.entity.DetallePresupuesto[ id=" + id + " ]";
+        return "com.dulcejosefina.entity.DetallePedido[ id=" + id + " ]";
     }
     public String toXML(){
-        StringBuilder xml = new StringBuilder("<itemPresupuesto>");
-        
-        xml.append("<id>").append(this.getId()).append("</id>")
-                .append("<subtotal>").append(this.getSubtotal()).append("</subtotal>")
+    StringBuilder xml = new StringBuilder("<itemDetallePedido>");
+    xml.append("<id>").append(this.getId()).append("</id>")
+            .append("<subtotal>").append(this.getSubtotal()).append("</subtotal>")
                 .append("<idPack>").append(this.getIdPack()).append("</idPack>")
                 .append("<IdVentaProducto>").append(this.getIdVentaProducto()).append("</IdVentaProducto>")
                 .append("<codigo>").append((!(this.getCodigo() == null)?this.getCodigo():"")).append("</codigo>")
@@ -184,8 +180,10 @@ public class DetallePresupuesto implements Serializable {
                 .append("<precio>").append(this.getPrecio()).append("</precio>")
                 .append("<descripcion>").append(this.getDescripcion()).append("</descripcion>")
                 .append("<nombrePack>").append(this.getNombrePack()).append("</nombrePack>")
-                .append("<cantidad>").append(this.getCantidad()).append("</cantidad>");
-    return xml.append("</itemPresupuesto>").toString();
+                .append("<cantidad>").append(this.getCantidad()).append("</cantidad>");     
+    return xml.append("</itemDetallePedido>").toString();
+    
     
     }
+    
 }

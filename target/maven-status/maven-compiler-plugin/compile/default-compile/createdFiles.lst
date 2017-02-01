@@ -1,8 +1,10 @@
 com\dulcejosefina\ejb\EJBTelefonoBean.class
 com\dulcejosefina\utils\DatosVentaProductoItem.class
+com\dulcejosefina\entity\Pedido.class
 com\dulcejosefina\ejb\EJBPersonaBean.class
 com\dulcejosefina\entity\PerfilUsuario.class
 com\dulcejosefina\entity\Presupuesto.class
+com\dulcejosefina\utils\DatosPedido.class
 com\dulcejosefina\ejb\EJBTarjetaBean.class
 com\dulcejosefina\entity\VentaProducto.class
 com\dulcejosefina\utils\ValidateClientandUserData.class
@@ -12,6 +14,7 @@ com\dulcejosefina\ejb\EJBPersonaTelefono.class
 com\dulcejosefina\utils\DatosProducto.class
 com\dulcejosefina\entity\DetallePresupuesto.class
 com\dulcejosefina\entity\TipoPersona.class
+com\dulcejosefina\entity\DetallePedido.class
 com\dulcejosefina\entity\ImagenProducto.class
 com\dulcejosefina\utils\DatosVentaSucursal.class
 com\dulcejosefina\entity\Proveedor.class

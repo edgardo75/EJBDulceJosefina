@@ -25,7 +25,7 @@ import javax.persistence.Temporal;
     @NamedQuery(name = "findProductById",query = "SELECT p FROM Producto p WHERE p.id =:id"),
     @NamedQuery(name="findProductoByDescripcionAprox",query="SELECT p FROM Producto p WHERE LOWER(p.descripcion) LIKE :descripcion or LOWER(p.descripcion) LIKE :descripcion1 order by p.descripcion asc"),
     @NamedQuery(name="findProductoByDescripcion",query="SELECT p FROM Producto p WHERE LOWER(p.descripcion) =:descripcion"),
-    @NamedQuery(name = "findVentaProducto",query = "SELECT p FROM Producto p where cast(p.precioUnitarioVenta as INTEGER)>0 or (p.precioUnitarioVenta >0 and p.precioUnitarioVenta<1) and p.id =:id"),
+    @NamedQuery(name = "findVentaProducto",query = "SELECT p FROM Producto p WHERE p.sucursalFK.id =:id and  cast(p.precioUnitarioVenta as INTEGER)>0 or (p.precioUnitarioVenta >0 and p.precioUnitarioVenta<1)"),
     @NamedQuery(name = "findProductoByCodigoBarraConVentas",query = "SELECT p FROM Producto p WHERE p.codigoBarra =:codigo AND CAST(p.precioUnitarioVenta AS INTEGER) > 0"),
         @NamedQuery(name = "findProductoByCodigoBarraOnly",query = "SELECT p FROM Producto p WHERE p.codigoBarra =:codigo")
 })

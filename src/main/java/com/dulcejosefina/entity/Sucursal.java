@@ -40,7 +40,8 @@ public class Sucursal implements Serializable {
     private List<VentaSucursal> ventaSucursalList;
     @OneToMany(mappedBy = "sucursalFK",fetch = FetchType.LAZY,orphanRemoval = true,targetEntity = Producto.class)
     private List<Producto>productoList;
-    
+    @OneToMany(mappedBy = "sucursalFK",fetch = FetchType.LAZY,targetEntity = Presupuesto.class)
+    private List<Presupuesto>presupuestoList;
     public Sucursal(){}
     public Long getId() {
         return id;
@@ -103,6 +104,14 @@ public class Sucursal implements Serializable {
 
     public void setProductoList(List<Producto> productoList) {
         this.productoList = productoList;
+    }
+
+    public List<Presupuesto> getPresupuestoList() {
+        return presupuestoList;
+    }
+
+    public void setPresupuestoList(List<Presupuesto> presupuestoList) {
+        this.presupuestoList = presupuestoList;
     }
 
     @Override

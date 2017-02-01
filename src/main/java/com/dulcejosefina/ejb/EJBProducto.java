@@ -5,6 +5,7 @@ import com.dulcejosefina.entity.Proveedor;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -28,25 +29,32 @@ private EntityManager em;
         Calendar calendario = Calendar.getInstance();
         calendario.add(Calendar.DAY_OF_MONTH, 7);
         
+        try {
+            
         
-       
-       Query consulta = em.createQuery("SELECT p FROM Producto p WHERE p.fechaVencimiento BETWEEN :f1 and :f2 AND CAST(p.precioUnitarioVenta as Integer) > 0");        
+
+                        Query consulta = em.createQuery("SELECT p FROM Producto p WHERE p.fechaVencimiento BETWEEN :f1 and :f2 AND Cast(p.precioUnitarioVenta as Integer)>0");        
+
+                         consulta.setParameter("f1", Calendar.getInstance(),TemporalType.TIMESTAMP);
+                         consulta.setParameter("f2", calendario,TemporalType.TIMESTAMP);
+
+                        List<Producto> lista =consulta.getResultList();
+                         if(!lista.isEmpty()){
+                                     for (Producto producto : lista) {
+                                         if(producto.getCompra()!=null&&producto.getVenta()!=null){
+                                          xml.append("<fecha1>").append(DateFormat.getDateInstance().format(Calendar.getInstance().getTime())).append("</fecha1>");
+                                          xml.append("<fecha2>").append(DateFormat.getDateInstance().format(calendario.getTime())).append("</fecha2>");
+                                          xml.append(producto.toXML());
+                                         }
+                                      }
+                          }
+                         xml.append("</Lista>");
+        } catch (Exception e) {
+            Logger.getLogger("Error en metodo seleccionarProductosAConFechaVencimientoEnUnaSemana "+e.getMessage());
+        }finally{
         
-        consulta.setParameter("f1", Calendar.getInstance(),TemporalType.TIMESTAMP);
-        consulta.setParameter("f2", calendario,TemporalType.TIMESTAMP);
-        
-       List<Producto> lista =consulta.getResultList();
-        
-       for (Producto producto : lista) {
-           if(producto.getCompra()!=null&&producto.getVenta()!=null){
-            xml.append("<fecha1>").append(DateFormat.getDateInstance().format(Calendar.getInstance().getTime())).append("</fecha1>");
-            xml.append("<fecha2>").append(DateFormat.getDateInstance().format(calendario.getTime())).append("</fecha2>");
-            xml.append(producto.toXML());
-           }
+        return xml.append("</Lista>").toString();
         }
-        xml.append("</Lista>");
-        
-        return xml.toString();
     }
     @WebMethod(operationName = "seleccionarProductosSinStock")
     public String seleccionarProductosConStockMinimo(){

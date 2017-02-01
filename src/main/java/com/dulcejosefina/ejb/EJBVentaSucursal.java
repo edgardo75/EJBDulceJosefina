@@ -7,6 +7,7 @@ import com.dulcejosefina.entity.Sucursal;
 import com.dulcejosefina.entity.VentaSucursal;
 import com.dulcejosefina.utils.DatosDetalleVentaSucursal;
 import com.dulcejosefina.utils.DatosPersona;
+import com.dulcejosefina.utils.DatosProveedor;
 import com.dulcejosefina.utils.DatosSucursal;
 import com.dulcejosefina.utils.DatosVentaSucursal;
 import com.dulcejosefina.utils.ItemDetalleVentaSucursalItem;
@@ -50,7 +51,8 @@ private EntityManager em;
     @WebMethod
     public String crearVenta(String xmlVenta){        
         String resultado = "";
-        DatosVentaSucursal datosVentaSucursal = transformarAObjeto(xmlVenta);  
+        DatosVentaSucursal datosVentaSucursal = new DatosVentaSucursal();
+                datosVentaSucursal=datosVentaSucursal.transformarAObjeto(xmlVenta);  
         resultado=VerificarStockProductosDeVentaAntesDeAlmacenar(datosVentaSucursal);
         
         if(resultado.isEmpty()){
@@ -94,6 +96,7 @@ private EntityManager em;
         xstream.alias("sucursal",DatosSucursal.class);
         xstream.alias("detalleVenta",DatosDetalleVentaSucursal.class);
         xstream.alias("itemVenta", ItemDetalleVentaSucursalItem.class);
+        xstream.alias("proveedor", DatosProveedor.class);
         xstream.addImplicitCollection(DatosDetalleVentaSucursal.class, "list");
         return (DatosVentaSucursal) xstream.fromXML(datosVenta);
     }
@@ -281,7 +284,7 @@ private EntityManager em;
    @WebMethod(operationName = "selectVenta")
    public String selectVenta(long idVenta,long idSucursal){
    StringBuilder xml = new StringBuilder("<Lista>");
-       // VentaSucursal venta = em.find(VentaSucursal.class, idVenta);  
+       
         Query consultaVentaBySucursal=em.createNamedQuery("findVentaBySucursal").setParameter("idVenta", idVenta).setParameter("idSucursal", idSucursal);
         List<VentaSucursal>lista = consultaVentaBySucursal.getResultList();
         if(lista.isEmpty()){
@@ -291,19 +294,7 @@ private EntityManager em;
                          xml.append("<item>").append(ventaSucursal.toXML()).append("</item>").append("</Lista>");
                 }
         
-        }
-        
-        
-//        if(venta == null){
-//            xml.append("vacio").append("</Lista>");
-//        }else{
-//            if(venta.getAnulado()==0&&venta.getSucursalFK().getId()==idSucursal){
-//                xml.append("<item>").append(venta.toXML()).append("</item>").append("</Lista>");
-//            }
-//        
-//        }
-       
-        
+        }     
    return xml.toString();
    }
    

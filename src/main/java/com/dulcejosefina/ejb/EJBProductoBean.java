@@ -701,14 +701,11 @@ public long modificarFechaVencimientoProducto(long idProducto,String nuevaFechaV
 @WebMethod
     public String buscarTodosLosVentaProducto(long idSucursal) {
         StringBuilder xml=new StringBuilder("<Lista>");
-        Query consulta = em.createNamedQuery("findVentaProducto",Producto.class).setParameter("id", idSucursal);
-        
-        
+        Query consulta = em.createNamedQuery("findVentaProducto",Producto.class).setParameter("id", idSucursal);       
     
        List<Producto>lista = consulta.getResultList();
-        List<VentaProducto>venta = null;
-       
-        ventaProducto(xml,lista,venta,0);
+        List<VentaProducto>venta = null;       
+        ventaProductoMethod(xml,lista,venta,0);
         return xml.append("</Lista>").toString();
     }
     @WebMethod
@@ -881,7 +878,7 @@ public long modificarFechaVencimientoProducto(long idProducto,String nuevaFechaV
                                    stock.setCantidadActual(producto.getCantidadTotalActual());
                                    stock.setCantidadAgregada(0);
                                    stock.setCantidadInicial(0);
-                                   stock.setDetalle("SE DESCONTO STOCK DEL PRODUCTO POR VENTA N°"+venta.getId());
+                                   stock.setDetalle("SE DESCONTO STOCK DEL PRODUCTO POR VENTA N "+venta.getId());
                                    stock.setFechaAgregadoProducto(producto.getFechaCantidadIngresada());
                                    stock.setPorcentajeCompra(0);
                                    stock.setPorcentajeVenta(0);
@@ -904,23 +901,33 @@ public long modificarFechaVencimientoProducto(long idProducto,String nuevaFechaV
         Calendar calendario = Calendar.getInstance();
         calendario.add(Calendar.DAY_OF_MONTH, 7);
         
+      
+           try {
+            
         
-       
-       Query consulta = em.createQuery("SELECT p FROM Producto p WHERE p.fechaVencimiento BETWEEN :f1 and :f2");        
+ 
         
-        consulta.setParameter("f1", Calendar.getInstance(),TemporalType.TIMESTAMP);
-        consulta.setParameter("f2", calendario,TemporalType.TIMESTAMP);
-        
-       List<Producto> lista =consulta.getResultList();
-        
-       for (Producto producto : lista) {
-            xml.append("<fecha1>").append(DateFormat.getDateInstance().format(Calendar.getInstance().getTime())).append("</fecha1>");
-            xml.append("<fecha2>").append(DateFormat.getDateInstance().format(calendario.getTime())).append("</fecha2>");
-            xml.append(producto.toXML());
+
+                            Query consulta = em.createQuery("SELECT p FROM Producto p WHERE p.fechaVencimiento BETWEEN :f1 and :f2");        
+
+                             consulta.setParameter("f1", Calendar.getInstance(),TemporalType.TIMESTAMP);
+                             consulta.setParameter("f2", calendario,TemporalType.TIMESTAMP);
+
+                            List<Producto> lista =consulta.getResultList();
+                             if(!lista.isEmpty()){
+                                 for (Producto producto : lista) {
+                                      xml.append("<fecha1>").append(DateFormat.getDateInstance().format(Calendar.getInstance().getTime())).append("</fecha1>");
+                                      xml.append("<fecha2>").append(DateFormat.getDateInstance().format(calendario.getTime())).append("</fecha2>");
+                                      xml.append(producto.toXML());
+                                  }
+                                 }
+
+                             xml.append("</Lista>");
+        } catch (Exception e) {
+            Logger.getLogger("Error en metodo seleccionarProductosAConFechaVencimientoEnUnaSemana "+e.getMessage());
+        }finally{
+            return xml.toString();
         }
-        xml.append("</Lista>");
-        
-        return xml.toString();
     }
     @WebMethod
     public String leerArchivoParaAlmacenarProductosEnLote() throws IOException {
@@ -1152,45 +1159,48 @@ public String buscarProductoPorCodigoDeBarra(String codigoBarra,int cantidad){
     consulta.setParameter("codigo", codigoBarra.trim());
     List<Producto>lista = consulta.getResultList();
         List<VentaProducto>venta = null;
-       
-        ventaProducto(xml,lista,venta,cantidad);
+        
+        ventaProductoMethod(xml,lista,venta,cantidad);
         return xml.append("</Lista>").toString();
 }
-private void ventaProducto(StringBuilder xml, List<Producto> lista, List<VentaProducto> venta,int cantidad) {    
+private void ventaProductoMethod(StringBuilder xml, List<Producto> lista, List<VentaProducto> venta,int cantidad) {    
          
        for (Producto producto : lista) {                   
+         
+          if(producto.getPrecioUnitarioVenta().doubleValue()>0){
+                venta=producto.getVenta();
            
-           venta=producto.getVenta();
            
-               if(!venta.isEmpty()){
-                   StringBuilder  xmlVentaProducto = new StringBuilder(5); 
-                    for (VentaProducto ventaProducto : venta) {               
-                        
-                                if(ventaProducto.getPrecio().doubleValue()>0){
-                                                                            
-                                    xmlVentaProducto.append("<itemVenta>")
-                                                 .append("<idVentaProducto>").append(ventaProducto.getId()).append("</idVentaProducto>")
-                                                 .append("<precio>").append(ventaProducto.getPrecio().doubleValue()).append("</precio>")
-                                                 .append("<nombrePack>").append(ventaProducto.getPackFK().getDescripcion()).append("</nombrePack>")
-                                                 .append("<idPack>").append(ventaProducto.getPackFK().getId()).append("</idPack>")
-                                                 .append("<presentacion>").append(ventaProducto.getPresentacion()).append("</presentacion>")                                 
-                                                 .append("</itemVenta>\n");
-                                         
-                                 
-                                }                                    
-                              
-                    }
-                 
-                                 xml.append("<item>").append("<id>").append(producto.getId()).append("</id>")
-                                 .append("<descripcion>").append(producto.getDescripcion()).append("</descripcion>")
-                                 .append("<codigo>").append(producto.getCodigoBarra()).append("</codigo>")
-                                 .append("<resto>").append(producto.getCantidadTotalActual()-cantidad).append("</resto>")
-                                 .append("<stock>").append(producto.getCantidadTotalActual()).append("</stock>")
-                                 .append(xmlVentaProducto);
-                            xml.append("</item>");
-                 
-           
-       }
+                        if(!venta.isEmpty()){
+                            StringBuilder  xmlVentaProducto = new StringBuilder(5); 
+                             for (VentaProducto ventaProducto : venta) {               
+
+                                         if(ventaProducto.getPrecio().doubleValue()>0){
+
+                                             xmlVentaProducto.append("<itemVenta>")
+                                                          .append("<idVentaProducto>").append(ventaProducto.getId()).append("</idVentaProducto>")
+                                                          .append("<precio>").append(ventaProducto.getPrecio().doubleValue()).append("</precio>")
+                                                          .append("<nombrePack>").append(ventaProducto.getPackFK().getDescripcion()).append("</nombrePack>")
+                                                          .append("<idPack>").append(ventaProducto.getPackFK().getId()).append("</idPack>")
+                                                          .append("<presentacion>").append(ventaProducto.getPresentacion()).append("</presentacion>")                                 
+                                                          .append("</itemVenta>\n");
+
+
+                                         }                                    
+
+                             }
+
+                                          xml.append("<item>").append("<id>").append(producto.getId()).append("</id>")
+                                          .append("<descripcion>").append(producto.getDescripcion()).append("</descripcion>")
+                                          .append("<codigo>").append(producto.getCodigoBarra()).append("</codigo>")
+                                          .append("<resto>").append(producto.getCantidadTotalActual()-cantidad).append("</resto>")
+                                          .append("<stock>").append(producto.getCantidadTotalActual()).append("</stock>")
+                                          .append(xmlVentaProducto);
+                                     xml.append("</item>");
+
+
+                }
+          }
        }
         
     }
@@ -1290,6 +1300,7 @@ private void ventaProducto(StringBuilder xml, List<Producto> lista, List<VentaPr
     private BigDecimal calculoPorcentaje(BigDecimal precioProducto, BigDecimal percent) {
                     BigDecimal precio = precioProducto;            
                     BigDecimal multiplication = precio.multiply(percent);
+                    
         return multiplication.divide(new BigDecimal(100), 0);
     }
 
@@ -1297,5 +1308,31 @@ private void ventaProducto(StringBuilder xml, List<Producto> lista, List<VentaPr
         return em.createNamedQuery("Producto.findAllBySucursal").setParameter("id", idSucursal);
          
     }
-    
+    @WebMethod
+    public String selectListaProductoPorProveedor(long idProveedor,long idSucursal){
+        StringBuilder xml = new StringBuilder("<Lista>\n");   
+        
+        Query consulta = em.createQuery("SELECT DISTINCT p1 FROM Proveedor p1 inner join p1.producto p2 ON "
+                + "p1.id=:id WHERE p2.sucursalFK.id =:id1 AND p2.precioUnitarioVenta>0 or (p2.precioUnitarioVenta>0 AND p2.precioUnitarioVenta<1)");
+        consulta.setParameter("id", idProveedor);
+        consulta.setParameter("id1", idSucursal);
+         List<Proveedor>lista = consulta.getResultList();
+        xml.append("<proveedor>");
+        if(!lista.isEmpty()){
+                    List<VentaProducto>venta = null;
+                   for (Proveedor prov: lista) {
+                       xml.append("<nombreProveedor><![CDATA[").append(prov.getNombre()).append("]]></nombreProveedor>");
+                        List<Producto>producto = prov.getProducto();
+
+                        ventaProductoMethod(xml, producto, venta, 0);
+
+
+                   }
+        }else{
+            xml.append("<no>").append("no producto").append("</no>");
+        }
+        xml.append("</proveedor>");
+        
+        return xml.append("</Lista>").toString();
+    }
 }
