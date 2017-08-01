@@ -1,14 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.dulcejosefina.utils;
-
-/**
- *
- * @author Edgardo
- */
 public class ItemDetalleVentaSucursalItem {
     private long id;
     private long idPack;
@@ -20,10 +10,8 @@ public class ItemDetalleVentaSucursalItem {
     private double precio;
     private double subtotal;
     private int cantidad;
-
     public ItemDetalleVentaSucursalItem() {
     }
-
     public long getId() {
         return id;
     }
@@ -62,8 +50,5 @@ public class ItemDetalleVentaSucursalItem {
 
     public int getCantidad() {
         return cantidad;
-    }
-    
-
-    
+    }    
 }

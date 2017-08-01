@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.dulcejosefina.entity;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,15 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
-
-/**
- *
- * @author Edgardo
- */
 @Entity
 @NamedQueries({@NamedQuery(name = "selectAllDetallePresupuestoById",query = "SELECT d FROM DetallePresupuesto d WHERE d.presupuesto.id =:id")})
 public class DetallePresupuesto implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @TableGenerator(name = "DetallePresupuestoIdGen",table = "ID_GEN_DETALLEPRESUPUESTO", pkColumnName="DETPRENAME",pkColumnValue="DetallePresupuesto", valueColumnName="DETPREKEY",
@@ -32,7 +21,6 @@ public class DetallePresupuesto implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE,generator = "DetallePresupuestoIdGen")
     @Column(name = "ID_DETALLE_PRESUPUESTO")
     private Long id;
-
     @Column(name = "SUBTOTAL",columnDefinition = "DECIMAL(15,3) DEFAULT'0.000'")
     private BigDecimal subtotal;   
     @Column(name = "IDPACK")
@@ -176,12 +164,12 @@ public class DetallePresupuesto implements Serializable {
         StringBuilder xml = new StringBuilder("<itemPresupuesto>");
         
         xml.append("<id>").append(this.getId()).append("</id>")
-                .append("<subtotal>").append(this.getSubtotal()).append("</subtotal>")
+                .append("<subtotal>").append(this.getSubtotal().setScale(2, RoundingMode.DOWN)).append("</subtotal>")
                 .append("<idPack>").append(this.getIdPack()).append("</idPack>")
                 .append("<IdVentaProducto>").append(this.getIdVentaProducto()).append("</IdVentaProducto>")
                 .append("<codigo>").append((!(this.getCodigo() == null)?this.getCodigo():"")).append("</codigo>")
                 .append("<presentacion>").append(this.getPresentacion()).append("</presentacion>")
-                .append("<precio>").append(this.getPrecio()).append("</precio>")
+                .append("<precio>").append(new BigDecimal(this.getPrecio()).setScale(2, RoundingMode.DOWN)).append("</precio>")
                 .append("<descripcion>").append(this.getDescripcion()).append("</descripcion>")
                 .append("<nombrePack>").append(this.getNombrePack()).append("</nombrePack>")
                 .append("<cantidad>").append(this.getCantidad()).append("</cantidad>");

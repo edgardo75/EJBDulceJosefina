@@ -14,7 +14,6 @@ C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\d
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\DetallePedido.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\DatosVentaProductoItem.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\PerfilUsuario.java
-C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\ejb\EJBPersonaTelefono.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\DatosPackProducto.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\PersonaTelefono.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\DatosDetalleVentaSucursal.java
@@ -26,7 +25,6 @@ C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\d
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\VentaSucursal.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\DatosTelefono.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\Telefono.java
-C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\ejb\EJBPersonaBeanRemote.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\DatosVentaSucursal.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\PackProducto.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\DatosImagen.java
@@ -34,15 +32,14 @@ C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\d
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\CajaEntradaSalida.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\Presupuesto.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\TelefonoItem.java
+C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\RolPersona.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\Sucursal.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\DatosHistoricoVentaSucursal.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\DatosCajaEntradaSalida.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\Persona.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\TipoPersona.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\DatosStockProducto.java
-C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\ejb\EJBHistoricoVentaSucursal.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\ItemDetalleVentaSucursalItem.java
-C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\ejb\EJBTimmer.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\Imagen.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\ejb\EJBPersonaBean.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\ejb\EJBSucursalBean.java
@@ -59,6 +56,5 @@ C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\d
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\DetalleVentaSucursal.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\utils\DatosVentaProducto.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\Producto.java
-C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\ejb\EJBCompraProducto.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\ejb\EJBProveedorBean.java
 C:\Users\Edgardo\Documents\NetBeansProjects\EJBDulceJosefina\src\main\java\com\dulcejosefina\entity\CompraProducto.java

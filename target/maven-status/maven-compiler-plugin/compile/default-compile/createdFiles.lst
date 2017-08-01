@@ -8,9 +8,7 @@ com\dulcejosefina\utils\DatosPedido.class
 com\dulcejosefina\ejb\EJBTarjetaBean.class
 com\dulcejosefina\entity\VentaProducto.class
 com\dulcejosefina\utils\ValidateClientandUserData.class
-com\dulcejosefina\ejb\EJBPersonaBeanRemote.class
 com\dulcejosefina\utils\TelefonoItem.class
-com\dulcejosefina\ejb\EJBPersonaTelefono.class
 com\dulcejosefina\utils\DatosProducto.class
 com\dulcejosefina\entity\DetallePresupuesto.class
 com\dulcejosefina\entity\TipoPersona.class
@@ -19,7 +17,6 @@ com\dulcejosefina\entity\ImagenProducto.class
 com\dulcejosefina\utils\DatosVentaSucursal.class
 com\dulcejosefina\entity\Proveedor.class
 com\dulcejosefina\entity\Tarjeta.class
-com\dulcejosefina\ejb\EJBHistoricoVentaSucursal.class
 com\dulcejosefina\entity\PackProducto.class
 com\dulcejosefina\entity\Telefono.class
 com\dulcejosefina\ejb\EJBProveedorBean.class
@@ -29,15 +26,14 @@ com\dulcejosefina\entity\RolUsuario.class
 com\dulcejosefina\utils\DatosCajaEntradaSalida.class
 com\dulcejosefina\utils\DatosImagen.class
 com\dulcejosefina\utils\DatosTelefono.class
-com\dulcejosefina\ejb\EJBTimmer.class
 com\dulcejosefina\utils\ItemDetalleVentaSucursalItem.class
 com\dulcejosefina\utils\DatosCompraProducto.class
 com\dulcejosefina\utils\DatosVentaProducto.class
 com\dulcejosefina\entity\Persona.class
+com\dulcejosefina\entity\RolPersona.class
 com\dulcejosefina\entity\TipoDocumento.class
 com\dulcejosefina\entity\StockProducto.class
 com\dulcejosefina\utils\DatosPersona.class
-com\dulcejosefina\ejb\EJBCompraProducto.class
 com\dulcejosefina\entity\CompraProducto.class
 com\dulcejosefina\entity\Genero.class
 com\dulcejosefina\utils\DatosDetalleVentaSucursal.class

@@ -1,6 +1,7 @@
 package com.dulcejosefina.ejb;
 import com.dulcejosefina.entity.Genero;
 import com.dulcejosefina.entity.Persona;
+import com.dulcejosefina.entity.RolPersona;
 import com.dulcejosefina.entity.TipoDocumento;
 import com.dulcejosefina.entity.TipoPersona;
 import com.dulcejosefina.utils.DatosPersona;
@@ -20,7 +21,6 @@ import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
 @WebService
 @Stateless
 @LocalBean
@@ -28,8 +28,7 @@ public class EJBPersonaBean {
     @PersistenceContext
     private EntityManager em;
     @Inject
-    private EJBTelefonoBean telefonoBean;    
-    
+    private EJBTelefonoBean telefonoBean;        
     ValidateClientandUserData validateDataUser;
     String nombreyApellidoPattern;
     String numberPattern_Dni;
@@ -40,22 +39,17 @@ public class EJBPersonaBean {
         this.numberPattern_Dni="(?=^.{1,10}$)\\d+$";
         this.numberPattern_Cuil="(?=^.{1,11}$)\\d+$";
         this.email_Pattern="^[\\w\\-\\+\\*]+[\\w\\S]@(\\w+\\.)+[\\w]{2,4}$";
-        validateDataUser = new ValidateClientandUserData();
-    
+        validateDataUser = new ValidateClientandUserData();    
     }
     @WebMethod
     public long crearPersona(String xmlPersona)  {
         long retorno = 0;        
-        DatosPersona getDatosPersona = (DatosPersona) transformarXmlToObjetXstream(xmlPersona);   
-        
+        DatosPersona getDatosPersona = (DatosPersona) transformarXmlToObjetXstream(xmlPersona);  
         retorno = (!getDatosPersona.getTipoPersona().equalsIgnoreCase("cliente")?chequearCamposRequeridos(getDatosPersona):1);
         if(retorno==1){
-            if(validarCamposRequeridosNombreYApellido(getDatosPersona)){         
-                
-                            if(validarNumeroIdentificacionPersonalYEmail(getDatosPersona)){
-                                
+            if(validarCamposRequeridosNombreYApellido(getDatosPersona)){        
+                if(validarNumeroIdentificacionPersonalYEmail(getDatosPersona)){
                                 retorno = verificarDatosDniCuilYLogin(getDatosPersona);                     
-                                
                                 if(getDatosPersona.getId()==0){
                                     switch((int)retorno){
                                         case 1:retorno=-6;
@@ -67,36 +61,26 @@ public class EJBPersonaBean {
                                     }
                                 }else{
                                     retorno = actualizarDatosPersona(xmlPersona,getDatosPersona);
-
                                 }
-
                             }else{retorno = -5;}              
                         } else{
                             retorno =-4;
                          }
-        }
-       
+        }       
         return retorno;
     }
-
     private Object transformarXmlToObjetXstream(String xml) {
         XStream xstream = new XStream(new StaxDriver());
         xstream.alias("empleado", DatosPersona.class);
         xstream.alias("datosTelefono", DatosTelefono.class);
         xstream.alias("telefono", TelefonoItem.class);
         xstream.addImplicitCollection(DatosTelefono.class, "list");
-        
-        
-        
         return xstream.fromXML(xml);
     }
-
     private boolean buscarLogin(String login) {
         Query consulta = em.createQuery("SELECT p FROM Persona p WHERE p.login =:login");
-        
         return (consulta.setParameter("login", login).getResultList().size()==1) ;
     }
-
     private boolean buscarDNI(long dni) {
         Query consulta = em.createQuery("SELECT p FROM Persona p WHERE p.dni =:dni");
         return (consulta.setParameter("dni", dni).getResultList().size()==1);
@@ -106,101 +90,61 @@ public class EJBPersonaBean {
         Persona persona = new Persona();          
             persona=persistirDatosPersona(persona,datosPersona);
             persona = (xmlPersona.contains("<datosTelefono>")?persistirListaTelefonoPersona(persona,datosPersona):persona)  ;           
-            
-//            if(datosPersona.getDatosTelefono().getList().size()>0){
-//                unirRelacion(persona);
-//            }
-        em.flush();
+          em.flush();
         return persona.getId();
     }
     @WebMethod
     public String selectLogin(){
-        ProjectHelpers passTry = new ProjectHelpers();
+        
         StringBuilder xml = new StringBuilder("<Lista>\n");
         Query consulta = em.createNamedQuery("empleadoFindAllEmpleadoYJefe");
         List<Persona>lista = consulta.getResultList();
-        
-        
         if(!lista.isEmpty()){
             for (Persona persona : lista) {
-                String resultado = persona.getPassword() != null?passTry.decrypt(persona.getKeyPassword(), persona.getPassword()):"";
+        
                 xml.append("<item>");
                 xml.append("<id>").append(persona.getId()).append("</id>");
                 xml.append("<login>").append(persona.getLogin()).append("</login>");
-                xml.append("<password>").append(resultado).append("</password>");
+                xml.append("<password>").append(persona.getPassword()).append("</password>");
                 xml.append("</item>");
             }
         }
-        
-        
         return xml.append("</Lista>").toString();
-    
-   
     }
     @WebMethod
-    public String selectAllEmpleadosJefesyCliente(){
-        ProjectHelpers passTry = new ProjectHelpers();
+    public String selectAllEmpleadosJefesyCliente(){        
         StringBuilder xml = new StringBuilder("<Lista>\n");
         Query consulta = em.createNamedQuery("personaFindAll");
-        
-        
         List<Persona>lista = consulta.getResultList();
-        
         if(!lista.isEmpty()){
-            for (Persona persona : lista) {
-                String resultado = persona.getPassword() != null?passTry.decrypt(persona.getKeyPassword(), persona.getPassword()):"";
+            for (Persona persona : lista) {         
                 xml.append("<item>");
                 xml.append(persona.toXML());
-                xml.append("<password>").append(resultado).append("</password>");
+                xml.append("<password>").append(persona.getPassword()).append("</password>");
                 xml.append("</item>");
             }
         }
-        
-        
         return xml.append("</Lista>").toString();
     }
-
     private long chequearCamposRequeridos(DatosPersona datosPersona) {
-        
         return (datosPersona.getNombre().isEmpty()||datosPersona.getApellido().isEmpty()||datosPersona.getLogin().isEmpty()||datosPersona.getPassword().isEmpty()?-1:1);
     }
-
     private boolean validarCamposRequeridosNombreYApellido(DatosPersona datosPersona) {
-    
-        
-        
         return (validateDataUser.validate(datosPersona.getNombre().trim(), nombreyApellidoPattern)&&validateDataUser.validate(datosPersona.getApellido().trim(), nombreyApellidoPattern));
-        
-      
     }
-
     private boolean validarNumeroIdentificacionPersonalYEmail(DatosPersona datosPersona) {
         boolean retorno = false;
             if(!String.valueOf(datosPersona.getDni()).isEmpty()){
-                
                 retorno = validateDataUser.validate(String.valueOf(datosPersona.getDni()), numberPattern_Dni);
-                
-
             }
-            
             if(!String.valueOf(datosPersona.getCuil()).isEmpty()){
                 retorno = validateDataUser.validate(String.valueOf(datosPersona.getCuil()), numberPattern_Cuil);
-            
             }
-        
             if(!datosPersona.getEmail().isEmpty()){
                     retorno = validateDataUser.isValidEmailAddress(datosPersona.getEmail());
-            
-            
             }
-            
-        
-        
-        
         return retorno;
-        
     }
-
     private long verificarDatosDniCuilYLogin(DatosPersona datosPersona) {
         long retorno =0L;
         if(datosPersona.getTipoPersona().equalsIgnoreCase("cliente")&&(datosPersona.getDni()>0&& datosPersona.getCuil()>0)){
@@ -217,53 +161,32 @@ public class EJBPersonaBean {
             }
         }
        return retorno;
-            
-        
-       
     }
     @WebMethod
     public boolean buscarCuil(long cuil) {
          Query consulta = em.createQuery("SELECT p FROM Persona p WHERE p.cuil =:cuil");
         return (consulta.setParameter("cuil", cuil).getResultList().size()==1);
     }
-
     private long actualizarDatosPersona(String xmlPersona, DatosPersona datosPersona) {
-        Persona persona = em.find(Persona.class, datosPersona.getId());
-        
-        if(persona!=null){    
-            
+        Persona persona = em.find(Persona.class, datosPersona.getId());        
+        if(persona!=null){                
             persona = persistirDatosPersona(persona, datosPersona);
-            persona = (xmlPersona.contains("<datosTelefono>")?persistirListaTelefonoPersona(persona, datosPersona):persona) ;
-//            if(datosPersona.getDatosTelefono().getList().size()>0){
-//                unirRelacion(persona);
-//            }
-//            em.merge(persona);
-            
+            persona = (xmlPersona.contains("<datosTelefono>")?persistirListaTelefonoPersona(persona, datosPersona):persona) ;            
             em.flush();
             return persona.getId();
         }else{
             return -3;
         }
-        
-        
-        
     }
 
     private Persona persistirDatosPersona(Persona persona, DatosPersona datosPersona) {
-        
         persona = datosRequeridosImportantes(persona,datosPersona);
         persona = datosSecundarios(persona,datosPersona);
-        
         em.persist(persona);
-        
         return persona;
     }
 
     private Persona datosRequeridosImportantes(Persona persona, DatosPersona datosPersona) {    
-        
-        ProjectHelpers passworTry = new ProjectHelpers();
-        
-            
         
         persona.setNombre(datosPersona.getNombre().trim());
         persona.setApellido(datosPersona.getApellido().trim());
@@ -271,13 +194,9 @@ public class EJBPersonaBean {
             persona.setLogin(datosPersona.getLogin().trim());
         }
         if(!datosPersona.getPassword().isEmpty()){
-            persona.setPassword(passworTry.encrypt(datosPersona.getPassword()));
-            persona.setKeyPassword(passworTry.encryptionKey);
+            persona.setPassword(datosPersona.getPassword());            
         }        
-        
-         
         if(datosPersona.getDni()>0){
-         
             persona.setDni(datosPersona.getDni());
         }
         
@@ -286,8 +205,6 @@ public class EJBPersonaBean {
         }        
         persona.setEstado(datosPersona.getEstado());
         persona.setFechaCarga(new Date());
-        //persona.setFechaUltimaCompraCliente(SimpleDateFormat.getDateInstance().parse("01/01/1900"));
-        
         return persona;
     }
 
@@ -317,6 +234,13 @@ public class EJBPersonaBean {
             break;
             default:persona.setTiposPersona(TipoPersona.EMPLEADO);
         }
+        switch(datosPersona.getRolPersona()){
+            case "ADMINISTRADOR":persona.setRol(RolPersona.ADMINISTRADOR);
+            break;
+            case "OPERADOR":persona.setRol(RolPersona.OPERADOR);
+            break;
+            default:persona.setRol(RolPersona.INVITADO);
+        }
         if(!datosPersona.getEmail().isEmpty()){
             persona.setEmail(datosPersona.getEmail());
         }else{
@@ -330,19 +254,7 @@ public class EJBPersonaBean {
     }
 
     private Persona persistirListaTelefonoPersona(Persona persona, DatosPersona datosPersona) {
-        
-//        if(datosPersona.getId()==0&&!datosPersona.getDatosTelefono().getList().isEmpty()){
-//            persona = telefonoBean.insertarListaTelefonoPersona(persona, datosPersona);
-//        }else{
-//            if(!datosPersona.getDatosTelefono().getList().isEmpty()){
-//                Persona personita = em.find(Persona.class, datosPersona.getId());
-//                persona = telefonoBean.insertarListaTelefonoPersona(personita, datosPersona);
-//            }
-//            
-//        }
-
-
-        if(!datosPersona.getDatosTelefono().getList().isEmpty()){
+     if(!datosPersona.getDatosTelefono().getList().isEmpty()){
             persona = telefonoBean.insertarListaTelefonoPersona(persona, datosPersona);
         } else {
         }
@@ -353,37 +265,57 @@ public class EJBPersonaBean {
     public boolean verificarDniCuil(String numeroDocOCuil) {
         int result = em.createQuery("SELECT p FROM Persona p WHERE p.dni=:dni OR p.cuil=:cuil").setParameter("dni", Long.valueOf(numeroDocOCuil)).setParameter("cuil", Long.valueOf(numeroDocOCuil)).getResultList().size();
         return result==1;
-        
     }
-@WebMethod
+    @WebMethod
     public String selectAllJefes() {
         String xml = "<Lista>";
-        ProjectHelpers passTry = new ProjectHelpers();
+
         Query consulta =em.createNamedQuery("findAllJefeOnly");
         List<Persona>lista = consulta.getResultList();
         for (Persona persona : lista) {
         xml+="<item>"
                 + "<id>"+persona.getId()+"</id>\n"
                 + "<login>"+persona.getLogin()+"</login>\n"
-        + "<password>"+passTry.decrypt(persona.getKeyPassword(), persona.getPassword())+"</password>"
+        + "<password>"+persona.getPassword()+"</password>"
                 + "</item>";
     }
         return xml+"</Lista>";
     }
-
+ @WebMethod
+    public String selectAllJefesAdmin() {
+        
+        String xml = "<Lista>";
+        try {     
+                Query consulta =em.createNamedQuery("findAllJefeOnlyAdmin");
+                List<Persona>lista = consulta.getResultList();
+                for (Persona persona : lista) {
+                        xml+="<item>"
+                                + "<id>"+persona.getId()+"</id>\n"
+                                + "<login>"+persona.getLogin()+"</login>\n"
+                        + "<password>"+persona.getPassword()+"</password>"
+                                + "</item>";
+                }
+        } catch (Exception e) {
+            
+        }
+        return xml+"</Lista>";
+    }
 @WebMethod
-public boolean chequearPasswordDelUsuario(long idUsuario,String password){
-    ProjectHelpers passTry = new ProjectHelpers();
-    Persona persona = em.find(Persona.class, idUsuario);
+public boolean chequearPasswordDelUsuario(long idUsuario,String password){ 
     
-    return (passTry.decrypt(persona.getKeyPassword(), persona.getPassword()) == null ? password == null : passTry.decrypt(persona.getKeyPassword(), persona.getPassword()).equals(password));
-
-
+    Persona persona = em.find(Persona.class, idUsuario);
+    return ((persona.getPassword() == null ? password == null : persona.getPassword().equals(password)));
 }
-
-   
-
-   
-   
+@WebMethod
+public boolean sacarKeyYKeyPassword(){
+    ProjectHelpers passTry = new ProjectHelpers();
+Query consulta = em.createNamedQuery("personaFindAll");
+List<Persona>lista = consulta.getResultList();
+    for (Persona persona : lista) {
+        String key=persona.getKeyPassword();
+        String pass=persona.getPassword();
+        persona.setPassword(passTry.decrypt(key, pass));
+    }
+return true;
 }
-
+}

@@ -27,6 +27,8 @@
     <class>com.dulcejosefina.entity.Pedido</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
+        <property name="javax.persistence.jdbc.driver" value="org.eclipse.persistence.platform.database.SQLServerPlatform"/>
     </properties>
   </persistence-unit>
+  
 </persistence>

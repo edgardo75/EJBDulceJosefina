@@ -15,6 +15,7 @@ public class DatosPersona {
     private String detalle;
     private String tipoPersona;
     private String genero;
+    private String rolPersona;
     private String tipoDocumento;
     private int puntosClientePrefencial;
     private char clientePerefencial;
@@ -74,6 +75,10 @@ public class DatosPersona {
 
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public String getRolPersona() {
+        return rolPersona;
     }
 
     public String getPassword() {

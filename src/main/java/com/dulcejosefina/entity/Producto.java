@@ -23,10 +23,11 @@ import javax.persistence.Temporal;
 @NamedQueries({@NamedQuery(name = "Producto.findAllBySucursal",query = "SELECT p FROM Producto p WHERE p.sucursalFK.id =:id order by p.id ASC"),
     @NamedQuery(name = "proveedorFindAll",query = "SELECT p FROM Producto p WHERE p.proveedorFK.id =:id"),
     @NamedQuery(name = "findProductById",query = "SELECT p FROM Producto p WHERE p.id =:id"),
-    @NamedQuery(name="findProductoByDescripcionAprox",query="SELECT p FROM Producto p WHERE LOWER(p.descripcion) LIKE :descripcion or LOWER(p.descripcion) LIKE :descripcion1 order by p.descripcion asc"),
+    @NamedQuery(name="findProductoByDescripcionAprox",query="SELECT p FROM Producto p WHERE LOWER(p.descripcion) LIKE :descripcion or LOWER(p.descripcion) LIKE :descripcion1 AND p.sucursalFK.id =:idSucursal order by p.descripcion asc"),
     @NamedQuery(name="findProductoByDescripcion",query="SELECT p FROM Producto p WHERE LOWER(p.descripcion) =:descripcion"),
     @NamedQuery(name = "findVentaProducto",query = "SELECT p FROM Producto p WHERE p.sucursalFK.id =:id and  cast(p.precioUnitarioVenta as INTEGER)>0 or (p.precioUnitarioVenta >0 and p.precioUnitarioVenta<1)"),
-    @NamedQuery(name = "findProductoByCodigoBarraConVentas",query = "SELECT p FROM Producto p WHERE p.codigoBarra =:codigo AND CAST(p.precioUnitarioVenta AS INTEGER) > 0"),
+    @NamedQuery(name = "findProductoByIdSucu",query = "SELECT p FROM Producto p WHERE p.id =:id AND p.sucursalFK.id =:idSucu"),    
+    @NamedQuery(name = "findProductoByCodigoBarraConVentas",query = "SELECT p FROM Producto p WHERE p.codigoBarra =:codigo AND CAST(p.precioUnitarioVenta AS INTEGER) > 0 and p.sucursalFK.id =:idSucursal"),
         @NamedQuery(name = "findProductoByCodigoBarraOnly",query = "SELECT p FROM Producto p WHERE p.codigoBarra =:codigo")
 })
 @Table(name = "PRODUCTO",indexes = {@Index(name = "codigoBarra_Index",columnList = "CODIGO_BARRA")})
@@ -429,7 +430,9 @@ public class Producto implements Serializable {
                     }
                     xml.append(detailVenta.append("</listDetalleVenta>\n"));                
                 }
+               
                 if(!this.getStockProductoList().isEmpty()){
+                    
                         xml.append("<listDetalleStock>\n");
                     StringBuilder detalleStock = new StringBuilder(5);
                     List<StockProducto>lista = this.getStockProductoList();

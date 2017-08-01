@@ -19,22 +19,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
-
-/**
- *
- * @author Edgardo
- */
 @Entity
 public class Presupuesto implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
      @TableGenerator(name = "PresupuestoIdGen",table = "ID_GEN_PRESUPUESTO", pkColumnName="PRENAME",pkColumnValue="Presupuesto", valueColumnName="PREKEY",
     allocationSize=1)
     @GeneratedValue(strategy = GenerationType.TABLE,generator = "PresupuestoIdGen")
     @Column(name = "ID_PRESUPUESTO")
-    private Long id;
-    
+    private Long id;    
     @Column(name="FECHA_VENTA")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date fechaVenta;

@@ -1,16 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.dulcejosefina.utils;
-
-/**
- *
- * @author Edgardo
- */
-public class DatosProducto {
-    
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+public class DatosProducto {    
     private long id;
     private String descripcion;
     private double precioUnitarioCompra;
@@ -34,31 +25,26 @@ public class DatosProducto {
     private DatosVentaProducto ventaProducto;
     private DatosPersona persona;
     private int fraccionado;
-
+    public DatosProducto() {
+    }
     public long getId() {
         return id;
     }
-
     public void setId(long id) {
         this.id = id;
     }
-
     public String getDescripcion() {
         return descripcion;
     }
-
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-
     public double getPrecioUnitarioCompra() {
         return precioUnitarioCompra;
     }
-
     public void setPrecioUnitarioCompra(double precioUnitarioCompra) {
         this.precioUnitarioCompra = precioUnitarioCompra;
     }
-
     public int getFraccionado() {
         return fraccionado;
     }
@@ -66,13 +52,6 @@ public class DatosProducto {
     public void setFraccionado(int fraccionado) {
         this.fraccionado = fraccionado;
     }
-
-   
-
-    
-
-    
-
     public DatosCompraProducto getCompraProducto() {
         return compraProducto;
     }
@@ -198,6 +177,18 @@ public class DatosProducto {
     public DatosPersona getPersona() {
         return persona;
     }
-    
-    
+     public DatosProducto transformaAObjetos(String xmlProducto) {
+        XStream xstream = new XStream(new StaxDriver());
+        xstream.alias("producto", DatosProducto.class);
+        xstream.alias("sucursal", DatosSucursal.class);
+        xstream.alias("proveedor", DatosProveedor.class);
+        xstream.alias("compraProducto", DatosCompraProducto.class);
+        xstream.alias("ventaProducto", DatosVentaProducto.class);
+        xstream.alias("itemCompra", DatosCompraProductoItem.class);
+        xstream.alias("itemVenta", DatosVentaProductoItem.class);
+        xstream.addImplicitCollection(DatosCompraProducto.class, "listShop");
+        xstream.addImplicitCollection(DatosVentaProducto.class, "listSale");
+        return (DatosProducto) xstream.fromXML(xmlProducto);
+    }    
+  
 }

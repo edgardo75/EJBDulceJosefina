@@ -1,7 +1,7 @@
 package com.dulcejosefina.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +21,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 @Entity
 @NamedQueries({@NamedQuery(name = "findVentasDiaBySucursalAndFechaYHora",query = "SELECT v FROM VentaSucursal v WHERE  v.fechaVenta = CAST(CURRENT_DATE as DATE) and v.horaVenta BETWEEN ?1 AND ?2 and v.anulado=0 order by v.id desc"),
-                @NamedQuery(name = "findVentaDelDiaPorFecha",query = "SELECT v FROM VentaSucursal v WHERE v.fechaVenta = Cast(:fecha as DATE) order by v.id desc"),
+                @NamedQuery(name = "findVentaDelDiaPorFecha",query = "SELECT v FROM VentaSucursal v WHERE v.fechaVenta =CAST(:fecha as DATE) and v.anulado=0 and v.sucursalFK.id=:sucursal order by v.id desc"),
                 @NamedQuery(name = "findAllVentas",query = "SELECT v FROM VentaSucursal v order by v.id desc"),
                 @NamedQuery(name = "findVentaBySucursal",query = "SELECT v FROM VentaSucursal v WHERE v.id =:idVenta AND v.sucursalFK.id =:idSucursal AND cast(v.anulado as integer) = 0 order by v.id desc")})
 public class VentaSucursal implements Serializable {
@@ -293,12 +293,12 @@ public class VentaSucursal implements Serializable {
                             .append("<hora>").append(this.getHoraVenta()!=null?new SimpleDateFormat("HH:mm ss").format(this.getHoraVenta()):0).append("</hora>")
                             .append("<fecha>").append(this.getFechaVenta()!=null?new SimpleDateFormat("dd/MM/yyyy").format(this.getFechaVenta()):0).append("</fecha>")
                             .append("<cantidad>").append(this.getCantidad()).append("</cantidad>")
-                            .append("<porcentajeDescuento>").append(this.getPorcentajeDescuento()).append("</porcentajeDescuento>")
-                            .append("<porcentajeRecargo>").append(this.getPorcentajeRecargo()).append("</porcentajeRecargo>")
-                            .append("<descuentoPesos>").append(this.getDescuentoPesos()).append("</descuentoPesos>")
-                            .append("<recargoPesos>").append(this.getRecargoPesos()).append("</recargoPesos>")
-                            .append("<totalGeneral>").append(DecimalFormat.getInstance().format(this.getTotalGeneral())).append("</totalGeneral>")
-                            .append("<totalAPagar>").append(DecimalFormat.getInstance().format(this.getTotalAPagar())).append("</totalAPagar>")
+                            .append("<porcentajeDescuento>").append(this.getPorcentajeDescuento().setScale(2, RoundingMode.DOWN)).append("</porcentajeDescuento>")
+                            .append("<porcentajeRecargo>").append(this.getPorcentajeRecargo().setScale(2, RoundingMode.DOWN)).append("</porcentajeRecargo>")
+                            .append("<descuentoPesos>").append(this.getDescuentoPesos().setScale(2, RoundingMode.DOWN)).append("</descuentoPesos>")
+                            .append("<recargoPesos>").append(this.getRecargoPesos().setScale(2, RoundingMode.DOWN)).append("</recargoPesos>")                           
+                            .append("<totalGeneral>").append(this.getTotalGeneral().setScale(2, RoundingMode.DOWN)).append("</totalGeneral>")                            
+                            .append("<totalAPagar>").append(this.getTotalAPagar().setScale(2, RoundingMode.DOWN)).append("</totalAPagar>")
                             .append("<nombre>").append(this.getNombre()).append("</nombre>")
                             .append("<apellido>").append(this.getApellido()).append("</apellido>")           
                             .append("<anulado>").append(this.getAnulado()).append("</anulado>")

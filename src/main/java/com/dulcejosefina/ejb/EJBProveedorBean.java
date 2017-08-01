@@ -1,5 +1,4 @@
 package com.dulcejosefina.ejb;
-
 import com.dulcejosefina.entity.DetallePedido;
 import com.dulcejosefina.entity.Pedido;
 import com.dulcejosefina.entity.Producto;
@@ -18,27 +17,18 @@ import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
 @WebService
 @Stateless
 @LocalBean
 public class EJBProveedorBean {
 @PersistenceContext
 private EntityManager em;
-    /**
-     * Web service operation
-     * @param nombreProveedor
-     * @param detalles
-     * @return 
-     */
     @WebMethod(operationName = "crearProveedor")
     public int crearProveedor(@WebParam(name = "nombreProveedor") String nombreProveedor, @WebParam(name = "detalles") String detalles) {
         int retorno =0;
-        
         Proveedor proveedor = new Proveedor();
         Query consulta = em.createQuery("SELECT p FROM Proveedor p WHERE p.nombre =:proveedor");
-        consulta.setParameter("proveedor".toLowerCase().trim(), nombreProveedor.toLowerCase().trim());
-        
+        consulta.setParameter("proveedor".toLowerCase().trim(), nombreProveedor.toLowerCase().trim());        
         if(consulta.getResultList().isEmpty()){
             proveedor.setNombre(nombreProveedor.toUpperCase().trim());              
             proveedor.setDetalles(detalles);
@@ -49,27 +39,20 @@ private EntityManager em;
             List<Proveedor>lista = consulta.getResultList();
             for (Proveedor proveedor1 : lista) {
                 retorno=proveedor1.getId().intValue();
-            }
-            
-        }
-        
-      
-        
+            }            
+        }    
         return retorno;
     }
-
     @WebMethod
     public String selectAllProveedor(){
         StringBuilder lista = new StringBuilder( "<Lista>\n");
         Query consulta = em.createNamedQuery("findAll.Proveedor");
-        List<Proveedor> ListaProveedor = consulta.getResultList();
-        
+        List<Proveedor> ListaProveedor = consulta.getResultList();        
         for (Proveedor proveedor : ListaProveedor) {
             lista.append(proveedor.toXML());
         }
-    return lista.append("</Lista>").toString();
+        return lista.append("</Lista>").toString();
     }
-    
      @WebMethod
     public long crearPedidoProveedor(String datosPedido) {
          DatosVentaSucursal datosPedidoProveedor = new DatosVentaSucursal();
@@ -89,9 +72,7 @@ private EntityManager em;
                  pedido.setTotalGeneral(BigDecimal.valueOf(datosPedidoProveedor.getTotalGeneral()));
                  pedido.setTotalRecargo(BigDecimal.valueOf(datosPedidoProveedor.getTotalRecargo()));
                  em.persist(pedido);
-                 persistirDetallePedido(pedido,datosPedidoProveedor);
-                 
-        
+                 persistirDetallePedido(pedido,datosPedidoProveedor);   
         return pedido.getId().intValue();
     }
     private void persistirDetallePedido(Pedido pedido,DatosVentaSucursal datosPedidoProveedor){
@@ -114,14 +95,11 @@ private EntityManager em;
         Query consulta = em.createQuery("SELECT d FROM DetallePedido d WHERE d.pedido.id =:id");
         consulta.setParameter("id", pedido.getId());
         pedido.setDetallePedidoList(consulta.getResultList());
-    
     }
     @WebMethod
     public String selectOnePedidoProveedor(long idPedido){
         String xml = "<Lista>";
-        Pedido pedido = em.find(Pedido.class, idPedido);
-        
+        Pedido pedido = em.find(Pedido.class, idPedido);        
         return xml.concat(pedido.toXML()).concat("</Lista>");
-        
     }
 }

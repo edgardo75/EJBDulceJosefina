@@ -1,5 +1,4 @@
 package com.dulcejosefina.entity;
-
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
@@ -26,6 +25,7 @@ import javax.persistence.TemporalType;
 @Entity
 @NamedQueries({@NamedQuery(name = "empleadoFindAllEmpleadoYJefe",query = "SELECT p FROM Persona p WHERE p.tiposPersona = com.dulcejosefina.entity.TipoPersona.EMPLEADO OR p.tiposPersona = com.dulcejosefina.entity.TipoPersona.JEFE"),
 @NamedQuery(name="findAllJefeOnly",query = "SELECT p FROM Persona p WHERE p.tiposPersona = com.dulcejosefina.entity.TipoPersona.JEFE"),    
+@NamedQuery(name="findAllJefeOnlyAdmin",query = "SELECT p FROM Persona p WHERE p.tiposPersona = com.dulcejosefina.entity.TipoPersona.JEFE AND p.rol = com.dulcejosefina.entity.RolPersona.ADMINISTRADOR"),    
 @NamedQuery(name="personaFindAll",query = "SELECT p  FROM Persona p ORDER BY p.fechaCarga desc")})
 @Table(name = "PERSONA",indexes = {@Index(name = "dni_Index",columnList = "NUMERO_DOCUMENTO"),
     @Index(name = "cuil_Index",columnList = "CUIL"),
@@ -67,6 +67,9 @@ public class Persona implements Serializable {
     @Column(name = "GENERO",columnDefinition = "VARCHAR(10) DEFAULT ''")
     @Enumerated(EnumType.STRING)
     private Genero genero;
+    @Column(name = "ROLPERSONA",columnDefinition = "VARCHAR(15) DEFAULT ''")
+    @Enumerated(EnumType.STRING)
+    private RolPersona rol;
     @Column(name = "TIPO_DOCUMENTO",columnDefinition = "VARCHAR(8) DEFAULT ''")
     @Enumerated(EnumType.STRING)
     private TipoDocumento tipoDocumento;
@@ -222,6 +225,14 @@ public class Persona implements Serializable {
         return ventaSucursal;
     }
 
+    public RolPersona getRol() {
+        return rol;
+    }
+
+    public void setRol(RolPersona rol) {
+        this.rol = rol;
+    }
+
     public void setVentaSucursal(List<VentaSucursal> ventaSucursal) {
         this.ventaSucursal = ventaSucursal;
     }
@@ -275,7 +286,7 @@ public class Persona implements Serializable {
     public void setListaPersonaTelefono(List<PersonaTelefono> listaPersonaTelefono) {
         this.listaPersonaTelefono = listaPersonaTelefono;
     }
-
+    
    
 
     @Override
@@ -317,7 +328,7 @@ public class Persona implements Serializable {
     xml.append("<id>").append(this.getId()).append("</id>").append("<nombre>").append(this.getNombre()).append("</nombre>").append("<apellido>").append(this.getApellido()).append("</apellido>").append("<numeroDocumento>").append(this.getDni())
        .append("</numeroDocumento>").append("<cuil>").append(this.getCuil()).append("</cuil>").append("<email>").append(this.getEmail()).append("</email>").append("<login>").append(this.getLogin()).append("</login>")
             .append("<fechaCarga>").append(DateFormat.getDateTimeInstance().format(this.getFechaCarga())).append("</fechaCarga>").append("<detalle>").append(this.getDetalles()).append("</detalle>").append("<genero>").append(this.getGenero().toString()).append("</genero>")
-            .append("<tipoDocu>").append(this.getTipoDocumento().toString()).append("</tipoDocu>").append("<tipoPersona>").append(this.getTiposPersona().toString()).append("</tipoPersona>")
+            .append("<tipoDocu>").append(this.getTipoDocumento().toString()).append("</tipoDocu>").append("<rolPersona>").append(this.getRol().toString()).append("</rolPersona>").append("<tipoPersona>").append(this.getTiposPersona().toString()).append("</tipoPersona>")
             .append("<estado>").append(this.getEstado()).append("</estado>").append("<clientePreferencial>").append(this.getPerefencial()).append("</clientePreferencial>")
             .append("<puntosClientePreferencial>").append(this.getPuntosClientePrefencial()).append("</puntosClientePreferencial>")
             .append("<fechaUltimaCompraCliente>").append(fechaUltimaCompra).append("</fechaUltimaCompraCliente>");

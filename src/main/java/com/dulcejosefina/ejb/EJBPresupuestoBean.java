@@ -1,5 +1,4 @@
 package com.dulcejosefina.ejb;
-
 import com.dulcejosefina.entity.DetallePresupuesto;
 import com.dulcejosefina.entity.Presupuesto;
 import com.dulcejosefina.entity.Producto;
@@ -16,15 +15,12 @@ import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-
 @Stateless
 @LocalBean
 @WebService
 public class EJBPresupuestoBean {
     @PersistenceContext
     private EntityManager em;
-
     @WebMethod
     public int crearPresupuesto(String xmlPresupuesto){
          DatosVentaSucursal datosPresupuesto = new DatosVentaSucursal();
@@ -46,12 +42,9 @@ public class EJBPresupuestoBean {
                 presupuesto.setSucursal(em.find(Sucursal.class, datosPresupuesto.getSucursal().getId()));
                 em.persist(presupuesto);
          persistirDetallePresupuesto(presupuesto,datosPresupuesto);
-          em.flush();
-    
+          em.flush();    
     return presupuesto.getId().intValue();
     }
-
-
     private void persistirDetallePresupuesto(Presupuesto presupuesto, DatosVentaSucursal datosPresupuesto) {
        List<ItemDetalleVentaSucursalItem>lista=datosPresupuesto.getDetalleVenta().getList();
         for (ItemDetalleVentaSucursalItem item : lista) {
@@ -77,8 +70,7 @@ public class EJBPresupuestoBean {
     public String selectOnePresupuesto(long idPresupuesto){
         StringBuilder xml = new StringBuilder("<Lista>");
         Presupuesto presupuesto = em.find(Presupuesto.class, idPresupuesto);
-        xml.append("<presupuesto>").append(presupuesto.toXML()).append("</presupuesto>\n").append("</Lista>\n");
-            
+        xml.append("<presupuesto>").append(presupuesto.toXML()).append("</presupuesto>\n").append("</Lista>\n");            
         return xml.toString();
     }
 }
