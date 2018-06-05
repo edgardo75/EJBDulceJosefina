@@ -65,7 +65,7 @@ private long codigoProveedor = 0;
     @WebMethod(operationName = "seleccionarProductosSinStock")
     public String seleccionarProductosConStockMinimo(){
         StringBuilder xml = new StringBuilder("<Lista>");
-        Query consulta = em.createQuery("SELECT p FROM Producto p WHERE p.cantidadTotalActual <5 AND p.cantidadTotalActual >=0 AND Cast(p.precioUnitarioVenta as Integer) > 0 order by p.cantidadTotalActual desc");
+        Query consulta = em.createQuery("SELECT p FROM Producto p LEFT JOIN FETCH p.venta WHERE p.cantidadTotalActual <5 AND p.cantidadTotalActual >=0 AND Cast(p.precioUnitarioVenta as Integer) > 0 order by p.cantidadTotalActual desc");
         List<Producto>lista = consulta.getResultList();       
         for (Producto producto : lista) {
             if(producto.getVenta()!=null){

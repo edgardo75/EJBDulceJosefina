@@ -118,10 +118,10 @@ private EJBProducto productoSupport;
         if(!listado.isEmpty()){                
             for (Producto producto : listado) {                
                 retorno = productoSupport.calcularPorcentajeCompra(producto, porcentaje);
-                producto.setDetalleCompra(producto.getDetalleCompra()+" Ingreso porcentaje "+porcentaje+" Proveedor "+em.find(Proveedor.class, idProveedor).getNombre());
+                producto.setDetalleCompra("Fecha: "+new Date()+" Ingreso porcentaje "+porcentaje+" Proveedor "+em.find(Proveedor.class, idProveedor).getNombre());
                 producto.setPorcentajeCompra(Double.valueOf(porcentaje));                
                 retorno = productoSupport.calcularPorcentajeVentaProductosProveedor(producto);
-                producto.setDetalleVenta(producto.getDetalleVenta()+" Ingreso porcentaje"+porcentaje+" Proveedor "+em.find(Proveedor.class, idProveedor).getNombre());
+                producto.setDetalleVenta("Fecha: "+new Date()+" Ingreso porcentaje"+porcentaje+" Proveedor "+em.find(Proveedor.class, idProveedor).getNombre());
                 producto.setPorcentajeVenta(Double.valueOf(porcentaje));
             }            
         }   

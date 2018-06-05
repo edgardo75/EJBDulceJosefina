@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -43,7 +44,7 @@ private EntityManager em;
            datosVentaSucursal=datosVentaSucursal.transformarAObjeto(xmlVenta);
            resultado=VerificarStockProductosDeVentaAntesDeAlmacenar(datosVentaSucursal);  
         try {
-        if(resultado.isEmpty()){            
+        if(resultado.equals("")){            
                    VentaSucursal venta = new VentaSucursal();
                     venta = persistirVenta(venta,datosVentaSucursal);  
                     persistirDetalleVenta(venta,datosVentaSucursal);
@@ -53,7 +54,7 @@ private EntityManager em;
                     resultado = String.valueOf(venta.getId().intValue());
         }
         } catch (Exception e) {
-            Logger.getLogger(e.getLocalizedMessage());
+            Logger.getLogger(e.getLocalizedMessage());            
         }
         return resultado;
     }
@@ -115,7 +116,7 @@ private EntityManager em;
                                 }
                             }
         List<VentaSucursal>lista = consulta.getResultList();
-        return recorreLista(lista);        
+        return recorreLista(lista,null);        
     }
     @WebMethod
     public String selectVentasDeUnDiaDeterminado(String fecha,int sucursal){         
@@ -124,14 +125,15 @@ private EntityManager em;
         consulta.setParameter("fecha",nuevaFecha);
         consulta.setParameter("sucursal", sucursal);
         List<VentaSucursal>lista = consulta.getResultList();
-        return recorreLista(lista);
+        return recorreLista(lista,null);
     }
-    private String recorreLista(List<VentaSucursal> lista) {
+    private String recorreLista(List<VentaSucursal> lista,Date fecha) {
         StringBuilder xml = new StringBuilder("<Lista>\n");
         double totalTodasLasVentas=0;     
         for (VentaSucursal ventaSucursal : lista) {           
             xml.append("<venta>\n")
             .append("<idVenta>").append(ventaSucursal.getId()).append("</idVenta>\n")
+            .append("<fechaQuery>").append(fecha!=null?new SimpleDateFormat("dd/MM/yyyy").format(fecha):0).append("</fechaQuery>\n")        
             .append("<fecha>").append(ventaSucursal.getFechaVenta()!=null?new SimpleDateFormat("dd/MM/yyyy").format(ventaSucursal.getFechaVenta()):0).append("</fecha>\n")        
             .append("<hora>").append(ventaSucursal.getHoraVenta()!=null?new SimpleDateFormat("HH:mm ss").format(ventaSucursal.getHoraVenta()):0).append("</hora>")
             .append("<totalApagar>").append(ventaSucursal.getTotalAPagar().setScale(2, RoundingMode.DOWN)).append("</totalApagar>\n")
@@ -287,7 +289,7 @@ private EntityManager em;
         String resultadoVerificacionStock="";
         boolean stock = false;        
             List<ItemDetalleVentaSucursalItem>lista = datosVentaSucursal.getDetalleVenta().getList();      
-            if(lista.size()>0){
+            if(!lista.isEmpty()){
                     for (int i = 0; i < lista.size()&&!stock; i++) {
                         ItemDetalleVentaSucursalItem item = lista.get(i);
                         Producto producto = em.find(Producto.class, item.getId());
@@ -395,4 +397,21 @@ private EntityManager em;
                                 em.persist(venta);
     return venta;
     }
+    
+    @WebMethod
+    public String getSalesCanceledTodayAndPrevius() throws Exception{
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DAY_OF_MONTH, -5);
+        Date date = calendar.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");   
+        
+        Query query = em.createQuery("SELECT v FROM VentaSucursal v WHERE  v.fechaVenta BETWEEN ?1 AND CAST(CURRENT_DATE as DATE) and v.anulado=1 order by v.id desc");
+        query.setParameter("1", sdf.parse(sdf.format(date)));
+    
+        List<VentaSucursal>lista = query.getResultList();
+        
+        return recorreLista(lista,date);        
+    }
+    
 }

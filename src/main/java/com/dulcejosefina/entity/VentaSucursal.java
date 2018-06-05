@@ -20,7 +20,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 @Entity
-@NamedQueries({@NamedQuery(name = "findVentasDiaBySucursalAndFechaYHora",query = "SELECT v FROM VentaSucursal v WHERE  v.fechaVenta = CAST(CURRENT_DATE as DATE) and v.horaVenta BETWEEN ?1 AND ?2 and v.anulado=0 order by v.id desc"),
+@NamedQueries({@NamedQuery(name = "findVentasDiaBySucursalAndFechaYHora",query = "SELECT v FROM VentaSucursal v WHERE v.anulado=0 and v.fechaVenta = CAST(CURRENT_DATE as DATE) and v.horaVenta BETWEEN ?1 AND ?2 order by v.id desc"),
                 @NamedQuery(name = "findVentaDelDiaPorFecha",query = "SELECT v FROM VentaSucursal v WHERE v.fechaVenta =CAST(:fecha as DATE) and v.anulado=0 and v.sucursalFK.id=:sucursal order by v.id desc"),
                 @NamedQuery(name = "findAllVentas",query = "SELECT v FROM VentaSucursal v order by v.id desc"),
                 @NamedQuery(name = "findVentaBySucursal",query = "SELECT v FROM VentaSucursal v WHERE v.id =:idVenta AND v.sucursalFK.id =:idSucursal AND cast(v.anulado as integer) = 0 order by v.id desc")})

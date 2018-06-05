@@ -83,9 +83,9 @@ public class Producto implements Serializable {
     private int fraccionado;
     @Column(name = "DETALLE_PRODUCTO",columnDefinition = "VARCHAR(255) DEFAULT''")
     private String detalleProducto;
-    @Column(name = "DETALLE_COMPRA")
+    @Column(name = "DETALLE_COMPRA",columnDefinition = "VARCHAR(255) DEFAULT''")
     private String detalleCompra;
-    @Column(name = "DETALLE_VENTA")
+    @Column(name = "DETALLE_VENTA",columnDefinition = "VARCHAR(255) DEFAULT''")
     private String detalleVenta;
     @ManyToOne(fetch = FetchType.LAZY,targetEntity = Proveedor.class)
     private Proveedor proveedorFK;
