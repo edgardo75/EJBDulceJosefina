@@ -10,28 +10,32 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
+
 @Entity
 public class CompraProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @TableGenerator(name = "CompraProductoIdGen",table = "ID_GEN_COMPRA_SUC", pkColumnName="CONAME",pkColumnValue="CompraProducto", valueColumnName="COKEY",
-    allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.TABLE,generator = "CompraProductoIdGen")
-    @Column(name = "ID_COMPRA_PRODUCTO")    
+    @TableGenerator(name = "CompraProductoIdGen", table = "ID_GEN_COMPRA_SUC", pkColumnName = "CONAME", pkColumnValue = "CompraProducto", valueColumnName = "COKEY",
+            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "CompraProductoIdGen")
+    @Column(name = "ID_COMPRA_PRODUCTO")
     private Long id;
-    @Column(name = "PRESENTACION",columnDefinition = "INTEGER default '0'")
+    @Column(name = "PRESENTACION", columnDefinition = "INTEGER default '0'")
     private Integer presentacion;
-    
-    @ManyToOne(fetch = FetchType.LAZY,targetEntity = Producto.class)
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Producto.class)
     private Producto productoFK;
-    @ManyToOne(fetch = FetchType.LAZY,targetEntity = PackProducto.class)
-    private PackProducto packFK;    
-    @Column(name = "PRECIO",columnDefinition = "DECIMAL(15,3) default '0.000'")
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = PackProducto.class)
+    private PackProducto packFK;
+    @Column(name = "PRECIO", columnDefinition = "DECIMAL(15,3) default '0.000'")
     private BigDecimal precio;
-    @Column(name = "PORCENTAJE",columnDefinition = "DECIMAL(15,3) default '0.000'")
+    @Column(name = "PORCENTAJE", columnDefinition = "DECIMAL(15,3) default '0.000'")
     private double porcentaje;
-    public CompraProducto(){}
+
+    public CompraProducto() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -47,8 +51,6 @@ public class CompraProducto implements Serializable {
     public void setPresentacion(Integer presentacion) {
         this.presentacion = presentacion;
     }
-
-   
 
     public Producto getProducto() {
         return productoFK;
@@ -66,11 +68,6 @@ public class CompraProducto implements Serializable {
         this.porcentaje = porcentaje;
     }
 
-    
-
-   
-   
-
     public PackProducto getPackFK() {
         return packFK;
     }
@@ -79,9 +76,6 @@ public class CompraProducto implements Serializable {
         this.packFK = packFK;
     }
 
-  
-
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -89,7 +83,6 @@ public class CompraProducto implements Serializable {
         return hash;
     }
 
-  
     public BigDecimal getPrecio() {
         return precio;
     }
@@ -97,8 +90,6 @@ public class CompraProducto implements Serializable {
     public void setPrecio(BigDecimal precio) {
         this.precio = precio;
     }
-
-    
 
     @Override
     public boolean equals(Object object) {
@@ -114,12 +105,13 @@ public class CompraProducto implements Serializable {
     public String toString() {
         return "com.dulcejosefina.entity.Compra[ id=" + id + " ]";
     }
-    public String toXML(){
-    StringBuilder xml = new StringBuilder("<itemCompra>\n");
-            xml.append("<id>").append(this.getId()).append("</id>\n").append("<presentacion>").append(this.getPresentacion())
-                    .append("</presentacion>\n" ).append("<precio>").append(this.getPrecio()).append("</precio>\n").append("<nombrePack>").append(this.getPackFK().getDescripcion())
-                    .append("</nombrePack>\n").append("<packId>").append(this.getPackFK().getId()).append("</packId>\n").append("<porcentaje>").append(this.getPorcentaje()).append("</porcentaje>\n")
-                    .append("</itemCompra>");
+
+    public String toXML() {
+        StringBuilder xml = new StringBuilder("<itemCompra>\n");
+        xml.append("<id>").append(this.getId()).append("</id>\n").append("<presentacion>").append(this.getPresentacion())
+                .append("</presentacion>\n").append("<precio>").append(this.getPrecio()).append("</precio>\n").append("<nombrePack>").append(this.getPackFK().getDescripcion())
+                .append("</nombrePack>\n").append("<packId>").append(this.getPackFK().getId()).append("</packId>\n").append("<porcentaje>").append(this.getPorcentaje()).append("</porcentaje>\n")
+                .append("</itemCompra>");
         return xml.toString();
     }
 }

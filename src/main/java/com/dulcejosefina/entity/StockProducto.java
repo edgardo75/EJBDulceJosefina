@@ -1,5 +1,4 @@
 package com.dulcejosefina.entity;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -162,18 +161,7 @@ public class StockProducto implements Serializable {
         return "com.dulcejosefina.entity.StockProducto[ id=" + id + " ]";
     }
       public String toXML(){
-    StringBuilder xml = new StringBuilder(5)
-            .append("<itemStock>\n<id>")
-            .append(this.getId()).append("</id>\n")
-            .append("<preciounitarioCompra>").append(this.getPrecioUnitarioCompra()).append("</preciounitarioCompra>\n")
-            .append("<precioUnitarioVenta>").append(this.getPrecioUnitarioVenta()).append("</precioUnitarioVenta>\n")
-            .append("<porcentajeCompra>").append(this.getPorcentajeCompra()).append("</porcentajeCompra>\n")
-            .append("<porcentajeVenta>").append(this.getPorcentajeVenta()).append("</porcentajeVenta>\n")
-            .append("<detalle>").append(this.getDetalle()).append("</detalle>\n").append("<cantidadInicial>")
-            .append(this.getCantidadInicial()).append("</cantidadInicial>\n").append("<cantidadTotalActual>")
-            .append(this.getCantidadActual()).append("</cantidadTotalActual>\n").append("<cantidadAgregada>").append(this.getCantidadAgregada())
-            .append("</cantidadAgregada>\n").append("<fechaAgregado><![CDATA[").append((this.getFechaAgregadoProducto()!=null?DateFormat.getInstance().format(this.getFechaAgregadoProducto()):0) ).append("]]></fechaAgregado>\n")
-            .append("</itemStock>");
-        return xml.toString();
+    String xml = "<itemStock>\n<id>" + this.getId() + "</id>\n" + "<preciounitarioCompra>" + this.getPrecioUnitarioCompra() + "</preciounitarioCompra>\n" + "<precioUnitarioVenta>" + this.getPrecioUnitarioVenta() + "</precioUnitarioVenta>\n" + "<porcentajeCompra>" + this.getPorcentajeCompra() + "</porcentajeCompra>\n" + "<porcentajeVenta>" + this.getPorcentajeVenta() + "</porcentajeVenta>\n" + "<detalle>" + this.getDetalle() + "</detalle>\n" + "<cantidadInicial>" + this.getCantidadInicial() + "</cantidadInicial>\n" + "<cantidadTotalActual>" + this.getCantidadActual() + "</cantidadTotalActual>\n" + "<cantidadAgregada>" + this.getCantidadAgregada() + "</cantidadAgregada>\n" + "<fechaAgregado><![CDATA[" + (this.getFechaAgregadoProducto()!=null?DateFormat.getInstance().format(this.getFechaAgregadoProducto()):0) + "]]></fechaAgregado>\n" + "</itemStock>";
+        return xml;
     }
 }

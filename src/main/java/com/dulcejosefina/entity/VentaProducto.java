@@ -15,23 +15,23 @@ import javax.persistence.TableGenerator;
 public class VentaProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @TableGenerator(name = "VentaProductoIdGen",table = "ID_GEN_VTAPROD", pkColumnName="VTAPRODNAME",pkColumnValue="VentaProducto", valueColumnName="VTAPRODKEY",
-    allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.TABLE,generator = "VentaProductoIdGen")
-    @Id    
-    @Column(name = "ID_VENTA_PRODUCTO")    
+    @TableGenerator(name = "VentaProductoIdGen", table = "ID_GEN_VTAPROD", pkColumnName = "VTAPRODNAME", pkColumnValue = "VentaProducto", valueColumnName = "VTAPRODKEY",
+            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "VentaProductoIdGen")
+    @Id
+    @Column(name = "ID_VENTA_PRODUCTO")
     private Long id;
-    @Column(name = "PRESENTACION",columnDefinition = "INTEGER default '0'")
+    @Column(name = "PRESENTACION", columnDefinition = "INTEGER default '0'")
     private Integer presentacion;
-       
-    @Column(name = "PRECIO",columnDefinition = "DECIMAL(15,3) default '0.000'")
+
+    @Column(name = "PRECIO", columnDefinition = "DECIMAL(15,3) default '0.000'")
     private BigDecimal precio;
-    @Column(name = "PORCENTAJE",columnDefinition = "DECIMAL(15,3) default '0.000'")
+    @Column(name = "PORCENTAJE", columnDefinition = "DECIMAL(15,3) default '0.000'")
     private double porcentaje;
-    
-    @ManyToOne(fetch = FetchType.LAZY,targetEntity = PackProducto.class)
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = PackProducto.class)
     private PackProducto packFK;
-    @ManyToOne(fetch = FetchType.LAZY,targetEntity = Producto.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Producto.class)
     private Producto productoFK;
 
     public Long getId() {
@@ -62,7 +62,6 @@ public class VentaProducto implements Serializable {
         return productoFK;
     }
 
-   
     public void setProductoFK(Producto productoFK) {
         this.productoFK = productoFK;
     }
@@ -75,11 +74,6 @@ public class VentaProducto implements Serializable {
         this.porcentaje = porcentaje;
     }
 
- 
-
-   
-
-
     public BigDecimal getPrecio() {
         return precio;
     }
@@ -87,10 +81,6 @@ public class VentaProducto implements Serializable {
     public void setPrecio(BigDecimal precio) {
         this.precio = precio;
     }
-
-   
-
-    
 
     @Override
     public int hashCode() {
@@ -113,18 +103,18 @@ public class VentaProducto implements Serializable {
     public String toString() {
         return "com.dulcejosefina.entity.Venta[ id=" + id + " ]";
     }
-    
-      public String toXML(){
-    StringBuilder xml = new StringBuilder("<itemVenta>\n");
-            xml.append("<id>").append(this.getId()).append("</id>\n")
-                    .append("<presentacion>").append(this.getPresentacion()).append("</presentacion>")                   
-                    .append("<precio>").append(this.getPrecio()).append("</precio>\n")
-                    .append("<nombrePack>").append(this.getPackFK().getDescripcion()).append("</nombrePack>\n")
-                    .append("<packId>").append(this.getPackFK().getId()).append("</packId>\n")
-                    .append("<porcentaje>").append(this.getPorcentaje()).append("</porcentaje>\n")
-                    .append("</itemVenta>");
+
+    public String toXML() {
+        StringBuilder xml = new StringBuilder("<itemVenta>\n");
+        xml.append("<id>").append(this.getId()).append("</id>\n")
+                .append("<presentacion>").append(this.getPresentacion()).append("</presentacion>")
+                .append("<precio>").append(this.getPrecio()).append("</precio>\n")
+                .append("<nombrePack>").append(this.getPackFK().getDescripcion()).append("</nombrePack>\n")
+                .append("<packId>").append(this.getPackFK().getId()).append("</packId>\n")
+                .append("<porcentaje>").append(this.getPorcentaje()).append("</porcentaje>\n")
+                .append("</itemVenta>");
         return xml.toString();
-        
+
     }
-    
+
 }
