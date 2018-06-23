@@ -102,7 +102,7 @@ public class EJBVentaSucursal {
     public String selectVentasHastaElMomento() {
         LocalDateTime timePoint = LocalDateTime.now(ZoneId.systemDefault());
         Query consulta = em.createNamedQuery("findVentasDiaBySucursalAndFechaYHora");
-        if (timePoint.getHour() > 7 && timePoint.getHour() < 15) {
+        if (timePoint.getHour() >= 7 && timePoint.getHour() <= 16) {
             String horaManana1 = ResourceBundle.getBundle("config").getString("HORA_MANANA1");
             String horaManana2 = ResourceBundle.getBundle("config").getString("HORA_MANANA2");
             try {
@@ -112,7 +112,7 @@ public class EJBVentaSucursal {
                 Logger.getLogger(EJBVentaSucursal.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            if (timePoint.getHour() >= 17 && timePoint.getHour() < 23) {
+            if (timePoint.getHour() >= 17 && timePoint.getHour() <= 24) {
                 String horaTarde1 = ResourceBundle.getBundle("config").getString("HORA_TARDE1");
                 String horaTarde2 = ResourceBundle.getBundle("config").getString("HORA_TARDE2");
 
@@ -308,7 +308,7 @@ public class EJBVentaSucursal {
         String resultadoVerificacionStock = "";
         boolean stock = false;
         List<ItemDetalleVentaSucursalItem> lista = datosVentaSucursal.getDetalleVenta().getList();
-        if (!lista.isEmpty()) {
+        if (lista!=null && !lista.isEmpty()) {
             for (int i = 0; i < lista.size() && !stock; i++) {
                 ItemDetalleVentaSucursalItem item = lista.get(i);
                 Producto producto = em.find(Producto.class, item.getId());
