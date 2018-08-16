@@ -328,34 +328,36 @@ public class EJBProducto {
 
     }
 
-    public void obtenerProductosConPrecioDeVenta(StringBuilder xml, List<Producto> listaVenta, List<VentaProducto> venta, int cantidad) {
-        for (Producto producto : listaVenta) {
-            if (producto.getPrecioUnitarioVenta().doubleValue() > 0) {
-                venta = producto.getVenta();
-                if (!venta.isEmpty()) {
-                    StringBuilder xmlVentaProducto = new StringBuilder(5);
-                    for (VentaProducto ventaProducto : venta) {
-                        if (ventaProducto.getPrecio().doubleValue() > 0) {
-                            xmlVentaProducto.append("<itemVenta>")
-                                    .append("<idVentaProducto>").append(ventaProducto.getId()).append("</idVentaProducto>")
-                                    .append("<precio>").append(new BigDecimal(ventaProducto.getPrecio().doubleValue()).setScale(2, RoundingMode.DOWN)).append("</precio>")
-                                    .append("<nombrePack>").append(ventaProducto.getPackFK().getDescripcion()).append("</nombrePack>")
-                                    .append("<idPack>").append(ventaProducto.getPackFK().getId()).append("</idPack>")
-                                    .append("<presentacion>").append(ventaProducto.getPresentacion()).append("</presentacion>")
-                                    .append("</itemVenta>\n");
-                        }
+    public void obtenerProductosConPrecioDeVenta(StringBuilder xml, List<Producto> listaVenta, int cantidad) {
+        if(!listaVenta.isEmpty()){
+            for (Producto producto : listaVenta) {
+                if (producto.getPrecioUnitarioVenta().doubleValue() > 0) {
+                   List<VentaProducto> venta = producto.getVenta();
+                    if (!venta.isEmpty()) {
+                        StringBuilder xmlVentaProducto = new StringBuilder(5);
+                            for (VentaProducto ventaProducto : venta) {
+                                if (ventaProducto.getPrecio().doubleValue() > 0) {
+                                    xmlVentaProducto.append("<itemVenta>")
+                                            .append("<idVentaProducto>").append(ventaProducto.getId()).append("</idVentaProducto>")
+                                            .append("<precio>").append(new BigDecimal(ventaProducto.getPrecio().doubleValue()).setScale(2, RoundingMode.DOWN)).append("</precio>")
+                                            .append("<nombrePack>").append(ventaProducto.getPackFK().getDescripcion()).append("</nombrePack>")
+                                            .append("<idPack>").append(ventaProducto.getPackFK().getId()).append("</idPack>")
+                                            .append("<presentacion>").append(ventaProducto.getPresentacion()).append("</presentacion>")
+                                            .append("</itemVenta>\n");
+                                }
+                            }
+                        xml.append("<item>").append("<id>").append(producto.getId()).append("</id>")
+                                .append("<descripcion>").append(producto.getDescripcion()).append("</descripcion>")
+                                .append("<codigo>").append(producto.getCodigoBarra()).append("</codigo>")
+                                .append("<resto>").append(producto.getCantidadTotalActual() - cantidad).append("</resto>")
+                                .append("<stock>").append(producto.getCantidadTotalActual()).append("</stock>")
+                                .append("<proveedor>")
+                                .append("<id>").append(producto.getProveedorFK().getId()).append("</id>\n")
+                                .append("<nombre>").append("<![CDATA[").append(producto.getProveedorFK().getNombre()).append("]]>").append("</nombre>")
+                                .append("</proveedor>")
+                                .append(xmlVentaProducto);
+                        xml.append("</item>");
                     }
-                    xml.append("<item>").append("<id>").append(producto.getId()).append("</id>")
-                            .append("<descripcion>").append(producto.getDescripcion()).append("</descripcion>")
-                            .append("<codigo>").append(producto.getCodigoBarra()).append("</codigo>")
-                            .append("<resto>").append(producto.getCantidadTotalActual() - cantidad).append("</resto>")
-                            .append("<stock>").append(producto.getCantidadTotalActual()).append("</stock>")
-                            .append("<proveedor>")
-                            .append("<id>").append(producto.getProveedorFK().getId()).append("</id>\n")
-                            .append("<nombre>").append("<![CDATA[").append(producto.getProveedorFK().getNombre()).append("]]>").append("</nombre>")
-                            .append("</proveedor>")
-                            .append(xmlVentaProducto);
-                    xml.append("</item>");
                 }
             }
         }

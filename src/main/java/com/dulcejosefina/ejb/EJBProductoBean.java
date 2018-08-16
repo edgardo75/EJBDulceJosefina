@@ -281,9 +281,8 @@ public class EJBProductoBean {
     public String buscarTodosLosVentaProducto(long idSucursal) {
         StringBuilder xml = new StringBuilder("<Lista>");
         Query consulta = em.createNamedQuery("findVentaProducto", Producto.class).setParameter("id", idSucursal);
-        List<Producto> lista = consulta.getResultList();
-        List<VentaProducto> venta = null;
-        productoSupport.obtenerProductosConPrecioDeVenta(xml, lista, venta, 0);
+        List<Producto> lista = consulta.getResultList();        
+        productoSupport.obtenerProductosConPrecioDeVenta(xml, lista, 0);
         return xml.append("</Lista>").toString();
     }
 
@@ -486,9 +485,8 @@ public class EJBProductoBean {
         consulta.setParameter("codigo", codigoBarra.trim());
         consulta.setParameter("idSucursal", idSucursal);
         List<Producto> lista = consulta.getResultList();
-        List<VentaProducto> venta = null;
 
-        productoSupport.obtenerProductosConPrecioDeVenta(xml, lista, venta, cantidad);
+        productoSupport.obtenerProductosConPrecioDeVenta(xml, lista, cantidad);
         return xml.append("</Lista>").toString();
     }
 
